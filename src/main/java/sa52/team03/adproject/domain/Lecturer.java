@@ -52,6 +52,13 @@ public class Lecturer {
 		this.password = password;
 		this.classes = classes;
 	}
+	
+	public Lecturer(String firstName, String lastName, String userName) {
+		super();
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.userName = userName;
+	}
 
 	public int getId() {
 		return id;
