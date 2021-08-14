@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import sa52.team03.adproject.domain.Lecturer;
+import sa52.team03.adproject.domain.Module;
 import sa52.team03.adproject.service.AdminService;
 
 @CrossOrigin(origins= "http://localhost:3000")
@@ -54,5 +55,36 @@ public class AdminController {
 	@DeleteMapping("/lecturers/{id}")
 	public void deleteLecturer(@PathVariable int id) {
 		adminService.deleteLecturer(id);
+	}
+	
+	@GetMapping("/modules")
+	public List<Module> getModule() {
+		return adminService.getModules();
+	}
+	
+	@GetMapping("/modules/{id}")
+	public Module getModuleById( @PathVariable int id) {
+		return adminService.getModuleById(id);
+	}
+
+	@PostMapping("/modules")
+	public Module addModule(@RequestBody Module module) {
+		return adminService.saveModule(module);
+	}
+	
+	@PutMapping("/modules/{id}")
+	public Module updateModule(@PathVariable int id, @RequestBody Module module) {
+		Module updatedModule = adminService.getModuleById(id);
+		
+		updatedModule.setCode(module.getCode());
+		updatedModule.setName(module.getName());
+		updatedModule.setMinAttendance(module.getMinAttendance());
+		
+		return adminService.saveModule(updatedModule);
+	}
+	
+	@DeleteMapping("/modules/{id}")
+	public void deleteModule(@PathVariable int id) {
+		adminService.deleteModule(id);
 	}
 }
