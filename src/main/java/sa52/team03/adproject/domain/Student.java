@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 public class Student {
 	@Id
@@ -26,12 +28,15 @@ public class Student {
 	
 	private String password;
 	
+	@JsonManagedReference
 	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Collection<Enrolment> enrolments;
 	
+	@JsonManagedReference
 	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Collection<Attendance> attendances;
 	
+	@JsonManagedReference
 	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Collection<StudentLeave> studentLeaves;
 

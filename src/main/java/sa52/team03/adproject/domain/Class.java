@@ -12,6 +12,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 public class Class {
 	@Id
@@ -20,20 +23,25 @@ public class Class {
 	
 	private Integer size;
 	
+	@JsonBackReference
 	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	private AcademicPeriod academicPeriod;
 	
+	@JsonBackReference
 	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	private Module module;
 	
+	@JsonBackReference
 	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name = "lecturer_id", nullable = true)
 	private Lecturer lecturer;
 	
-	@OneToMany(mappedBy = "_class", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonManagedReference
+	@OneToMany(mappedBy = "_class", cascade = { CascadeType.PERSIST, CascadeType.MERGE })	
 	private Collection<Schedule> schedules;
 	
-	@OneToMany(mappedBy = "_class", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonManagedReference
+	@OneToMany(mappedBy = "_class", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Collection<Enrolment> enrolments;
 
 	public Class() {
