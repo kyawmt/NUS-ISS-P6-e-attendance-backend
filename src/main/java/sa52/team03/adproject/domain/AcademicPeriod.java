@@ -14,8 +14,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 @Entity
 public class AcademicPeriod {
 	@Id
@@ -32,7 +30,6 @@ public class AcademicPeriod {
 	
 	private LocalDate endDate;
 	
-	@JsonManagedReference
 	@OneToMany(mappedBy = "academicPeriod", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Collection<Class> classes;
 	

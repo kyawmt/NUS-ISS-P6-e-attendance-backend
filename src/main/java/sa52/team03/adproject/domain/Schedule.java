@@ -12,16 +12,12 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 @Entity
 public class Schedule {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
-	@JsonBackReference
 	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	private Class _class;
 	
@@ -33,19 +29,11 @@ public class Schedule {
 	
 	private Integer predictedAttendance;
 	
-	@JsonManagedReference
 	@OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Collection<Attendance> attendances;
 
 	public Schedule() {
 		super();
-	}
-	
-	public Schedule(Class _class, LocalDate date) {
-		super();
-		this._class = _class;
-		this.date = date;
-		
 	}
 
 	public Schedule(Class _class, LocalDate date, String signInId, String signOutId) {

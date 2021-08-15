@@ -10,8 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 @Entity
 public class Lecturer {
 	@Id
@@ -28,8 +26,6 @@ public class Lecturer {
 	
 	private String password;
 	
-	
-	@JsonManagedReference
 	@OneToMany(mappedBy = "lecturer", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
 	private Collection<Class> classes;
 
