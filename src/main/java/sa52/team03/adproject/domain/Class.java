@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Class {
 	@Id
@@ -31,9 +33,11 @@ public class Class {
 	private Lecturer lecturer;
 	
 	@OneToMany(mappedBy = "_class", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonIgnore
 	private Collection<Schedule> schedules;
 	
 	@OneToMany(mappedBy = "_class", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonIgnore
 	private Collection<Enrolment> enrolments;
 
 	public Class() {

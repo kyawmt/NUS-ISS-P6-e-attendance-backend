@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Schedule {
 	@Id
@@ -30,6 +32,7 @@ public class Schedule {
 	private Integer predictedAttendance;
 	
 	@OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonIgnore
 	private Collection<Attendance> attendances;
 
 	public Schedule() {
