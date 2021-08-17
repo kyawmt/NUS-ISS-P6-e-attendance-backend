@@ -22,6 +22,8 @@ public class Class {
 	
 	private Integer size;
 	
+	private String code;
+	
 	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	private AcademicPeriod academicPeriod;
 	
@@ -82,6 +84,14 @@ public class Class {
 
 	public void setSize(Integer size) {
 		this.size = size;
+	}
+	
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	public AcademicPeriod getAcademicPeriod() {

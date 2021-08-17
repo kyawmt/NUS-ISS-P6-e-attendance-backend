@@ -1,6 +1,9 @@
 package sa52.team03.adproject.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import sa52.team03.adproject.domain.Class;
 import sa52.team03.adproject.domain.Lecturer;
 import sa52.team03.adproject.domain.Module;
+import sa52.team03.adproject.domain.Student;
 import sa52.team03.adproject.service.AdminService;
 
 @CrossOrigin(origins= "http://localhost:3000")
@@ -86,5 +91,41 @@ public class AdminController {
 	@DeleteMapping("/modules/{id}")
 	public void deleteModule(@PathVariable int id) {
 		adminService.deleteModule(id);
+	}
+		
+	@GetMapping("/module-classes/{id}")
+	public List<Map<String, Object>> getClassByModuleId(@PathVariable int id){
+		List<Map<String, Object>> classMapList =  new ArrayList<>();
+		List<Class> moduleClasses=adminService.getClassByModuleId(id);
+		 
+		for(Class c:moduleClasses) {
+			Map<String,Object> classMap=adminService.createClassMap(c);
+			classMapList.add(classMap);
+		}
+		
+		return classMapList;
+	}
+	
+	@GetMapping("/module-classes-info/{id}")
+	public Map<String,Object> getClassInfoByClassId(@PathVariable int id){
+		Map<String,Object> classMap=new HashMap<>();
+		for(Class c:adminService.getClasses()) {
+			if(c.getId()==id)
+				classMap=adminService.createClassMap(c);
+		}
+		return classMap;
+	}
+	
+	@GetMapping("/module-classes-students/{id}")
+	public List<Map<String, Object>> getStudentsByClassId(@PathVariable int id){
+		List<Map<String, Object>> studentMapList =new ArrayList<>();
+		List<Student> classStudents=adminService.getStudentsByClassId(id);
+		
+		for(Student s:classStudents) {
+			Map<String,Object> studentMap=adminService.createStudentMap(s, id);
+			studentMapList.add(studentMap);
+		}
+		
+		return studentMapList;
 	}
 }
