@@ -92,5 +92,4 @@ public class Module {
 		return "Module [id=" + id + ", code=" + code + ", name=" + name + ", minAttendance=" + minAttendance
 				+ ", classes=" + classes + "]";
 	}
-	
 }
