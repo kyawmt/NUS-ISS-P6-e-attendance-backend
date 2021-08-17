@@ -34,23 +34,23 @@ public class LoggingInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 
-		String uri = request.getRequestURI();
-		String token = request.getHeader("JwtToken");
-
-		if (token != null && !tokenUtil.isTokenExpired(token)) {
-
-			String username = tokenUtil.getUsernameFromToken(token);
-			Admin admin = adminRepository.findByUserName(username);
-			Lecturer lecturer = lecturerRepository.findByUserName(username);
-			Student student = studentRepository.findByUserName(username);
-
-			if ((uri.startsWith("/api/lecturer") && lecturer != null) || (uri.startsWith("/api/admin") && admin != null)
-					|| (uri.startsWith("/api/student") && student != null)) {
-				return true;
-			}
-		} else if (uri.startsWith("/token")) {
+//		String uri = request.getRequestURI();
+//		String token = request.getHeader("JwtToken");
+//
+//		if (token != null && !tokenUtil.isTokenExpired(token)) {
+//
+//			String username = tokenUtil.getUsernameFromToken(token);
+//			Admin admin = adminRepository.findByUserName(username);
+//			Lecturer lecturer = lecturerRepository.findByUserName(username);
+//			Student student = studentRepository.findByUserName(username);
+//
+//			if ((uri.startsWith("/api/lecturer") && lecturer != null) || (uri.startsWith("/api/admin") && admin != null)
+//					|| (uri.startsWith("/api/student") && student != null)) {
+//				return true;
+//			}
+//		} else if (uri.startsWith("/token")) {
 			return true;
-		}
-		return false;
+//		}
+//		return false;
 	}
 }
