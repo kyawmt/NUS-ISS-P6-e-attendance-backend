@@ -29,45 +29,45 @@ public class AdminServiceImpl implements AdminService {
 
 	@Autowired
 	LecturerRepository lecturerRepo;
-	
+
 	@Autowired
 	ModuleRepository moduleRepo;
-	
+
 	@Autowired
 	ClassRepository classRepo;
-	
+
 	@Autowired
 	ScheduleRepository scheduleRepo;
-	
+
 	@Autowired
 	AttendanceRepository attendanceRepo;
-	
+
 	@Autowired
 	StudentRepository studentRepo;
-	
+
 	@Autowired
 	EnrolmentRepository enrolmentRepo;
-	
-	@Override 
-	public List<Class> getClasses(){
+
+	@Override
+	public List<Class> getClasses() {
 		return classRepo.findAll();
 	}
-	
+
 	@Override
-	public List<Lecturer> getLecturers(){
+	public List<Lecturer> getLecturers() {
 		return lecturerRepo.findAll();
 	}
-	
+
 	@Override
 	public Lecturer saveLecturer(Lecturer lecturer) {
 		return lecturerRepo.save(lecturer);
 	}
-	
+
 	@Override
 	public Lecturer getLecturerById(int id) {
 		return lecturerRepo.getById(id);
 	}
-	
+
 	@Override
 	public void deleteLecturer(int id) {
 		lecturerRepo.deleteById(id);
@@ -92,132 +92,155 @@ public class AdminServiceImpl implements AdminService {
 	public void deleteModule(int id) {
 		moduleRepo.deleteById(id);
 	}
-	
+
 	@Override
 	public List<Class> getClassByModuleId(int id) {
-		List<Class> selectedClasses=new ArrayList<>();
-		Module module=moduleRepo.getById(id);
-		for(Class c: classRepo.findAll()) {
-			if(c.getModule().equals(module))
+		List<Class> selectedClasses = new ArrayList<>();
+		Module module = moduleRepo.getById(id);
+		for (Class c : classRepo.findAll()) {
+			if (c.getModule().equals(module))
 				selectedClasses.add(c);
 		}
 		return selectedClasses;
 	}
-	
+
 	@Override
-	public List<Student> getStudentsByClassId(int id){
-		List<Integer> selectedStudentId=new ArrayList<>();
-		List<Student> selectedStudents=new ArrayList<>();
-		
-		for(Enrolment e:enrolmentRepo.findAll()) {
-			if(e.get_class().getId()==id)
+	public List<Student> getStudentsByClassId(int id) {
+		List<Integer> selectedStudentId = new ArrayList<>();
+		List<Student> selectedStudents = new ArrayList<>();
+
+		for (Enrolment e : enrolmentRepo.findAll()) {
+			if (e.get_class().getId() == id)
 				selectedStudentId.add(e.getStudent().getId());
 		}
-		
-		for(Integer i:selectedStudentId) {
-			for(Student s:studentRepo.findAll()) {
-				if(s.getId()==i)
+
+		for (Integer i : selectedStudentId) {
+			for (Student s : studentRepo.findAll()) {
+				if (s.getId() == i)
 					selectedStudents.add(s);
 			}
 		}
 		return selectedStudents;
 	}
-	
+
 	@Override
-	public List<Schedule> getClassScheduleUntilNow(int classId){
-		List<Schedule> classScheduleUntilNow=new ArrayList<>();
-		
-		for(Schedule s:scheduleRepo.findAll()) {
-			if(s.get_class().getId()==classId && s.getDate().isBefore(LocalDate.now()))
+	public List<Schedule> getClassScheduleUntilNow(int classId) {
+		List<Schedule> classScheduleUntilNow = new ArrayList<>();
+
+		for (Schedule s : scheduleRepo.findAll()) {
+			if (s.get_class().getId() == classId && s.getDate().isBefore(LocalDate.now()))
 				classScheduleUntilNow.add(s);
 		}
-		
+
 		return classScheduleUntilNow;
 	}
-		
+
 	@Override
 	public String calculateClassAttendanceRate(int classId) {
-		
-		List<Student> classSize=new ArrayList<>();
+
+		List<Student> classSize = new ArrayList<>();
 		// Use class size, or calculate list in Enrolment Entity?
 		// actually, no need attribute--size in Class Entity?
-		List<Attendance> attendedStudent=new ArrayList<>();
-		List<Schedule> classScheduleUntilNow=this.getClassScheduleUntilNow(classId);
-		double classAttendanceRate=0;
-		
-		for(Enrolment e:enrolmentRepo.findAll()) {
-			if(e.get_class().getId()==classId)
+		List<Attendance> attendedStudent = new ArrayList<>();
+		List<Schedule> classScheduleUntilNow = this.getClassScheduleUntilNow(classId);
+		double classAttendanceRate = 0;
+
+		for (Enrolment e : enrolmentRepo.findAll()) {
+			if (e.get_class().getId() == classId)
 				classSize.add(e.getStudent());
 		}
-				
-		for(Schedule s:classScheduleUntilNow) {
-			for(Attendance a:attendanceRepo.findAll()) {
-				if(a.getSchedule().getId()==s.getId()) {
-					if(a.getSignIn()==true&&a.getSignOut()==true)
+
+		for (Schedule s : classScheduleUntilNow) {
+			for (Attendance a : attendanceRepo.findAll()) {
+				if (a.getSchedule().getId() == s.getId()) {
+					if (a.getSignIn() == true && a.getSignOut() == true)
 						attendedStudent.add(a);
 				}
 			}
 		}
-		
-		if(classSize.size()!=0)
-			classAttendanceRate=(double)attendedStudent.size()/(classSize.size()*classScheduleUntilNow.size())*100;
-		
-		return String.valueOf((int)classAttendanceRate)+"%";
-		
+
+		if (classSize.size() != 0)
+			classAttendanceRate = (double) attendedStudent.size() / (classSize.size() * classScheduleUntilNow.size())
+					* 100;
+
+		return String.valueOf((int) classAttendanceRate) + "%";
+
 	}
-	
+
 	@Override
-	public int calculateStudentAttendanceRate(int classId,int studentId) {
-		List<Schedule> classScheduleUntilNow=this.getClassScheduleUntilNow(classId);
-		int attendanceTimes=0;
-		double studentAttendanceRate=0;
-		
-		for(Attendance a:attendanceRepo.findAll()) {
-			for(Schedule s:classScheduleUntilNow) {
-				if(a.getSchedule().getId()==s.getId()&&a.getStudent().getId()==studentId
-						&&a.getSignIn()==true &&a.getSignOut()==true)
+	public int calculateStudentAttendanceRate(int classId, int studentId) {
+		List<Schedule> classScheduleUntilNow = this.getClassScheduleUntilNow(classId);
+		int attendanceTimes = 0;
+		double studentAttendanceRate = 0;
+
+		for (Attendance a : attendanceRepo.findAll()) {
+			for (Schedule s : classScheduleUntilNow) {
+				if (a.getSchedule().getId() == s.getId() && a.getStudent().getId() == studentId && a.getSignIn() == true
+						&& a.getSignOut() == true)
 					attendanceTimes++;
 			}
 		}
-		
-		if(classScheduleUntilNow.size()!=0)
-			studentAttendanceRate=(double)attendanceTimes/classScheduleUntilNow.size()*100;
-		
-		return (int)studentAttendanceRate;
+
+		if (classScheduleUntilNow.size() != 0)
+			studentAttendanceRate = (double) attendanceTimes / classScheduleUntilNow.size() * 100;
+
+		return (int) studentAttendanceRate;
 	}
-	 
+
 	@Override
-	public Map<String,Object> createClassMap(Class c) {
-		String classAttendanceRate=calculateClassAttendanceRate(c.getId());
-		
-		Map<String,Object> classMap=new HashMap<>();
+	public Map<String, Object> createClassMap(Class c) {
+		String classAttendanceRate = calculateClassAttendanceRate(c.getId());
+
+		Map<String, Object> classMap = new HashMap<>();
 		classMap.put("id", c.getId());
 		classMap.put("modulecode", c.getModule().getCode());
 		classMap.put("moduleid", c.getModule().getId());
 		classMap.put("code", c.getCode());
 		classMap.put("year", c.getAcademicPeriod().getYear());
 		classMap.put("semester", c.getAcademicPeriod().getSemester());
-		classMap.put("rate",classAttendanceRate);
-		
+		classMap.put("rate", classAttendanceRate);
+
 		return classMap;
 	}
-	
+
 	@Override
-	public Map<String,Object> createStudentMap(Student s,int classId){
-		int attendanceRate=calculateStudentAttendanceRate(classId, s.getId());
-		int reachMinAttendanceOrNot=0;
-		
-		if(attendanceRate>=classRepo.getById(classId).getModule().getMinAttendance())
-			reachMinAttendanceOrNot=1;
-		
-		Map<String,Object> studentMap=new HashMap<>();
+	public Map<String, Object> createStudentMap(Student s, int classId) {
+		int attendanceRate = calculateStudentAttendanceRate(classId, s.getId());
+		int reachMinAttendanceOrNot = 0;
+
+		if (attendanceRate >= classRepo.getById(classId).getModule().getMinAttendance())
+			reachMinAttendanceOrNot = 1;
+
+		Map<String, Object> studentMap = new HashMap<>();
 		studentMap.put("id", s.getId());
 		studentMap.put("studentId", s.getStudentId());
 		studentMap.put("firstName", s.getFirstName());
 		studentMap.put("lastName", s.getFirstName());
-		studentMap.put("rate", String.valueOf(attendanceRate)+"%");
+		studentMap.put("rate", String.valueOf(attendanceRate) + "%");
 		studentMap.put("reachMinAttendanceOrNot", reachMinAttendanceOrNot);
-		
+
 		return studentMap;
+	}
+
+	@Override
+	public List<Schedule> getSchedules() {
+		return scheduleRepo.findAll();
+	}
+
+	@Override
+	public Schedule saveSchedule(Schedule schedule) {
+		return scheduleRepo.save(schedule);
+	}
+
+	@Override
+	public void deleteSchedule(int id) {
+		scheduleRepo.deleteById(id);
+	}
+
+	public List<LocalDate> getScheduleDates(LocalDate startDate, LocalDate endDate, List<Integer> days) {
+		// This method is suggested by Min
+
+		return null;
+
 	}
 }

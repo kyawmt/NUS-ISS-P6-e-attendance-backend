@@ -19,56 +19,57 @@ import org.springframework.web.bind.annotation.RestController;
 import sa52.team03.adproject.domain.Class;
 import sa52.team03.adproject.domain.Lecturer;
 import sa52.team03.adproject.domain.Module;
+import sa52.team03.adproject.domain.Schedule;
 import sa52.team03.adproject.domain.Student;
 import sa52.team03.adproject.service.AdminService;
 
-@CrossOrigin(origins= "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping(path = "/api/admin/")
 public class AdminController {
 
 	@Autowired
 	AdminService adminService;
-	
+
 	@GetMapping("/lecturers")
-	public List<Lecturer> getLecturers(){
+	public List<Lecturer> getLecturers() {
 		return adminService.getLecturers();
 	}
-	
+
 	@PostMapping("/lecturers")
 	public Lecturer addLecturer(@RequestBody Lecturer lecturer) {
 		return adminService.saveLecturer(lecturer);
 	}
-	
+
 	@GetMapping("/lecturers/{id}")
-	public Lecturer getLecturerById(@PathVariable int id){
+	public Lecturer getLecturerById(@PathVariable int id) {
 		return adminService.getLecturerById(id);
 	}
-	
+
 	@PutMapping("/lecturers/{id}")
-	public Lecturer updateLecturer(@PathVariable int id,@RequestBody Lecturer lecturerDeatails){
-		Lecturer lecturer=adminService.getLecturerById(id);
-		
+	public Lecturer updateLecturer(@PathVariable int id, @RequestBody Lecturer lecturerDeatails) {
+		Lecturer lecturer = adminService.getLecturerById(id);
+
 		lecturer.setFirstName(lecturerDeatails.getFirstName());
 		lecturer.setLastName(lecturerDeatails.getLastName());
 		lecturer.setUserName(lecturerDeatails.getUserName());
-		
-		Lecturer updatedlecturer=adminService.saveLecturer(lecturer);
+
+		Lecturer updatedlecturer = adminService.saveLecturer(lecturer);
 		return updatedlecturer;
 	}
-	
+
 	@DeleteMapping("/lecturers/{id}")
 	public void deleteLecturer(@PathVariable int id) {
 		adminService.deleteLecturer(id);
 	}
-	
+
 	@GetMapping("/modules")
 	public List<Module> getModule() {
 		return adminService.getModules();
 	}
-	
+
 	@GetMapping("/modules/{id}")
-	public Module getModuleById( @PathVariable int id) {
+	public Module getModuleById(@PathVariable int id) {
 		return adminService.getModuleById(id);
 	}
 
@@ -76,56 +77,71 @@ public class AdminController {
 	public Module addModule(@RequestBody Module module) {
 		return adminService.saveModule(module);
 	}
-	
+
 	@PutMapping("/modules/{id}")
 	public Module updateModule(@PathVariable int id, @RequestBody Module module) {
 		Module updatedModule = adminService.getModuleById(id);
-		
+
 		updatedModule.setCode(module.getCode());
 		updatedModule.setName(module.getName());
 		updatedModule.setMinAttendance(module.getMinAttendance());
-		
+
 		return adminService.saveModule(updatedModule);
 	}
-	
+
 	@DeleteMapping("/modules/{id}")
 	public void deleteModule(@PathVariable int id) {
 		adminService.deleteModule(id);
 	}
-		
+
 	@GetMapping("/module-classes/{id}")
-	public List<Map<String, Object>> getClassByModuleId(@PathVariable int id){
-		List<Map<String, Object>> classMapList =  new ArrayList<>();
-		List<Class> moduleClasses=adminService.getClassByModuleId(id);
-		 
-		for(Class c:moduleClasses) {
-			Map<String,Object> classMap=adminService.createClassMap(c);
+	public List<Map<String, Object>> getClassByModuleId(@PathVariable int id) {
+		List<Map<String, Object>> classMapList = new ArrayList<>();
+		List<Class> moduleClasses = adminService.getClassByModuleId(id);
+
+		for (Class c : moduleClasses) {
+			Map<String, Object> classMap = adminService.createClassMap(c);
 			classMapList.add(classMap);
 		}
-		
+
 		return classMapList;
 	}
-	
+
 	@GetMapping("/module-classes-info/{id}")
-	public Map<String,Object> getClassInfoByClassId(@PathVariable int id){
-		Map<String,Object> classMap=new HashMap<>();
-		for(Class c:adminService.getClasses()) {
-			if(c.getId()==id)
-				classMap=adminService.createClassMap(c);
+	public Map<String, Object> getClassInfoByClassId(@PathVariable int id) {
+		Map<String, Object> classMap = new HashMap<>();
+		for (Class c : adminService.getClasses()) {
+			if (c.getId() == id)
+				classMap = adminService.createClassMap(c);
 		}
 		return classMap;
 	}
-	
+
 	@GetMapping("/module-classes-students/{id}")
-	public List<Map<String, Object>> getStudentsByClassId(@PathVariable int id){
-		List<Map<String, Object>> studentMapList =new ArrayList<>();
-		List<Student> classStudents=adminService.getStudentsByClassId(id);
-		
-		for(Student s:classStudents) {
-			Map<String,Object> studentMap=adminService.createStudentMap(s, id);
+	public List<Map<String, Object>> getStudentsByClassId(@PathVariable int id) {
+		List<Map<String, Object>> studentMapList = new ArrayList<>();
+		List<Student> classStudents = adminService.getStudentsByClassId(id);
+
+		for (Student s : classStudents) {
+			Map<String, Object> studentMap = adminService.createStudentMap(s, id);
 			studentMapList.add(studentMap);
 		}
-		
+
 		return studentMapList;
+	}
+
+	@GetMapping("/schedules")
+	public List<Schedule> getSchedules() {
+		return adminService.getSchedules();
+	}
+
+	@PostMapping("/schedules")
+	public Schedule addSchedule(@RequestBody Schedule schedule) {
+		return adminService.saveSchedule(schedule);
+	}
+
+	@DeleteMapping("/schedules/{id}")
+	public void deleteSchedule(@PathVariable int id) {
+		adminService.deleteSchedule(id);
 	}
 }
