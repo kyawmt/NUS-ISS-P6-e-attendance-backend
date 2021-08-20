@@ -1,15 +1,13 @@
 package sa52.team03.adproject.controller;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,8 +20,6 @@ import sa52.team03.adproject.domain.Schedule;
 import sa52.team03.adproject.domain.Student;
 import sa52.team03.adproject.domain.StudentLeave;
 import sa52.team03.adproject.service.LecturerService;
-import sa52.team03.adproject.domain.Class;
-import sa52.team03.adproject.domain.Enrolment;
 
 @CrossOrigin(origins= "http://localhost:3000")
 @RestController
@@ -31,13 +27,13 @@ import sa52.team03.adproject.domain.Enrolment;
 public class LecturerController {
 	
 	@Autowired
-	private LecturerService lservice;
+	private LecturerService lecturerService;
 	
 	
 	public List<Integer> getClassesID(){
 		String username = "tan";
-		Lecturer lec = lservice.getLecturerbyUsername(username); 
-		return lservice.findClassIDbyLecID(lec.getId());
+		Lecturer lec = lecturerService.getLecturerbyUsername(username); 
+		return lecturerService.findClassIDbyLecID(lec.getId());
 	}
 	
 	public Integer [] convertfromListToArray(List<Integer> o) {
@@ -50,7 +46,7 @@ public class LecturerController {
 		Integer [] classesID = convertfromListToArray(classIDs);
 		List<Integer> allSchedules = new ArrayList<>();		
 		for (int j = 0; j<classesID.length; j++) {
-			List<Integer> s2 = lservice.findScheduleByClassID(classesID[j]);
+			List<Integer> s2 = lecturerService.findScheduleByClassID(classesID[j]);
 			allSchedules.addAll(s2);
 		}		
 		return allSchedules;
@@ -62,7 +58,7 @@ public class LecturerController {
 		List<Schedule> allScheduleObject = new ArrayList<>();
 		
 		for (Integer i : allSchedules) {
-			Schedule s = lservice.getSchedule(i);
+			Schedule s = lecturerService.getSchedule(i);
 			allScheduleObject.add(s);
 		}
 		
@@ -74,12 +70,12 @@ public class LecturerController {
 	@GetMapping(value = {"class/schedules/attendance/present/{ids}"})
 	public List<Student> getAttendancePresent(@PathVariable int ids ){
 		List<Schedule> allSchedules = getSchedules();
-		Schedule selectedSchedule = lservice.getSchedule(ids);
+		Schedule selectedSchedule = lecturerService.getSchedule(ids);
 		
 
 		List<Student> present = new ArrayList<>();	
 		List<Student> absent = new ArrayList<>();
-		List<Attendance> e = lservice.getAttendancebyScheudleID(ids);
+		List<Attendance> e = lecturerService.getAttendancebyScheudleID(ids);
 		
 		for (Attendance a : e) {
 			
@@ -95,11 +91,11 @@ public class LecturerController {
 	@GetMapping(value = {"class/schedules/attendance/absent/{ids}"})
 	public List<Student> getAttendanceAbsent(@PathVariable int ids){
 		List<Schedule> allSchedules = getSchedules();
-		Schedule currentSchedule = lservice.getSchedule(ids);
+		Schedule currentSchedule = lecturerService.getSchedule(ids);
 		
 
 		List<Student> absent = new ArrayList<>();	
-		List<Attendance> e = lservice.getAttendancebyScheudleID(ids);
+		List<Attendance> e = lecturerService.getAttendancebyScheudleID(ids);
 		
 		for (Attendance a : e) {
 			if (a.getSignIn() == null || a.getSignOut() == null || a.getSignIn() == false || a.getSignOut() == false)
@@ -117,8 +113,8 @@ public class LecturerController {
 		
 		List<Student> present = new ArrayList<>();
 		List<Student> absent = new ArrayList<>();
-		List<Attendance> e = lservice.getAttendancebyScheudleID(ids);
-		Schedule schedule = lservice.getSchedule(ids);
+		List<Attendance> e = lecturerService.getAttendancebyScheudleID(ids);
+		Schedule schedule = lecturerService.getSchedule(ids);
 		
 		for (Attendance a : e) {
 			if (a.getSignIn() == null || a.getSignOut() == null)
@@ -128,7 +124,7 @@ public class LecturerController {
 		}
 		
 		int totalSize = present.size() + absent.size();
-		List<StudentLeave> sl = lservice.getAll();
+		List<StudentLeave> sl = lecturerService.getAll();
 		List<Student> absentwithValidReason = new ArrayList<>();
 		List<StudentLeave> sl2 = new ArrayList<>();
 		for (StudentLeave sls : sl) {
@@ -161,5 +157,102 @@ public class LecturerController {
 		return overview;
 		
 	}
+	
+	
+	@GetMapping("/schedules")
+	public List<Schedule> getAllSchedules(){
+									
+		return lecturerService.getSchedules();
+	}
+	
+	@GetMapping("/schedules/{id}")
+	public Schedule getSchedulebyId(@PathVariable int id) {
+		return lecturerService.getSchedulebyId(id);
+	}
+	
+	@GetMapping("/schedules/qrcode/{id}/{option}")
+	public Map<String, String> getQRCodeData(@PathVariable int id, @PathVariable String option) {
+		
+		//Create Attendance data if not created
+		lecturerService.createAttendanceData(id);
+		
+		Schedule schedule = lecturerService.getSchedulebyId(id);		
+		Map<String, String> qrCodeData = new HashMap<String, String>();
+							
+		if(option.equals("signIn")) {			
+			if(schedule.getSignInId()==null) {				
+				String signInId =UUID.randomUUID().toString();
+				long finishTime = Instant.now().toEpochMilli() + 90000;
+				schedule.setSignInId(Long.toString(finishTime)+"_"+signInId);
+				lecturerService.saveSchedule(schedule);
+				qrCodeData.put("finishTime", Long.toString(finishTime));
+				qrCodeData.put("qrCodeData", signInId+"_"+id+"_"+option);				
+			}else {
+				String[] data = schedule.getSignInId().split("_");				
+				qrCodeData.put("finishTime", data[0].toString());
+				qrCodeData.put("qrCodeData", data[1]+"_"+id+"_"+option);	
+			}
+		}else if(option.equals("signOut")) {
+			if(schedule.getSignOutId()==null) {				
+				String signOutId =UUID.randomUUID().toString();
+				long finishTime = Instant.now().toEpochMilli() + 90000;
+				schedule.setSignOutId(Long.toString(finishTime)+"_"+signOutId);
+				lecturerService.saveSchedule(schedule);
+				qrCodeData.put("finishTime", Long.toString(finishTime));
+				qrCodeData.put("qrCodeData", signOutId+"_"+id+"_"+option);				
+			}else {
+				String[] data = schedule.getSignOutId().split("_");				
+				qrCodeData.put("finishTime", data[0].toString());
+				qrCodeData.put("qrCodeData", data[1]+"_"+id+"_"+option);	
+			}
+		}
+				
+		return qrCodeData;
+		
+	}
+	
+	@GetMapping("/schedules/attendance/{id}/{option}")
+	public String getAttendanceForSchedule(@PathVariable int id, @PathVariable String option) {
+		
+		Schedule schedule = lecturerService.getSchedulebyId(id);
+		
+		ArrayList<Attendance> attendances = new ArrayList<Attendance>();
+		
+		attendances.addAll(schedule.getAttendances());
+		
+		int size = attendances.size();
+		
+		int attendance = 0;
+		
+		for(Attendance atten : attendances) {
+			
+			if(option.equals("signIn")) {
+				
+				if(atten.getSignIn()!=null) {
+					attendance += atten.getSignIn()? 1:0;
+				}
+				
+				
+			}else if(option.equals("signOut")) {
+				
+				if(atten.getSignOut()!=null) {
+					attendance += atten.getSignOut()? 1:0;
+				}								
+			}				
+		}
+		
+		double attendanceRate = 0;
+		
+		if(size!=0) {
+			
+			attendanceRate = (double) attendance/size * 100;
+		}
+		
+		String attendRateData = attendance + "/" + size + ", " + (int)attendanceRate + "%";		
+				
+		return attendRateData;
+		
+	}
+					
 
 }

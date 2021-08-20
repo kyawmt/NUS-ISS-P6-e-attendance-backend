@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import sa52.team03.adproject.domain.Attendance;
+import sa52.team03.adproject.domain.Schedule;
+import sa52.team03.adproject.domain.Student;
 
 public interface AttendanceRepository extends JpaRepository<Attendance, Integer> {
 	
@@ -18,4 +20,6 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
 	public List<Attendance> getAttendancebyScheduleID (int id);
 	
 	
+	public Attendance findByScheduleAndStudent(Schedule schedule, Student student);
+
 }

@@ -26,7 +26,7 @@ public class Attendance {
 	public Attendance() {
 		super();
 	}
-
+		
 	public Attendance(Schedule schedule, Student student, Boolean signIn, Boolean signOut) {
 		super();
 		this.schedule = schedule;

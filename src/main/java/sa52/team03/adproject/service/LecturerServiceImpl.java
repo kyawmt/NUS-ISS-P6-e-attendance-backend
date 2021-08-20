@@ -1,21 +1,18 @@
 package sa52.team03.adproject.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import sa52.team03.adproject.domain.Attendance;
-import sa52.team03.adproject.domain.Class;
 import sa52.team03.adproject.domain.Enrolment;
 import sa52.team03.adproject.domain.Lecturer;
-import sa52.team03.adproject.domain.Module;
 import sa52.team03.adproject.domain.Schedule;
-import sa52.team03.adproject.domain.Student;
 import sa52.team03.adproject.domain.StudentLeave;
 import sa52.team03.adproject.repo.AttendanceRepository;
 import sa52.team03.adproject.repo.ClassRepository;
-import sa52.team03.adproject.repo.EnrolmentRepository;
 import sa52.team03.adproject.repo.LecturerRepository;
 import sa52.team03.adproject.repo.ScheduleRepository;
 import sa52.team03.adproject.repo.StudentLeaveRepository;
@@ -45,6 +42,12 @@ public class LecturerServiceImpl implements LecturerService {
 	
 	@Autowired
 	StudentLeaveRepository leaverepo;
+
+	@Autowired
+	ScheduleRepository scheRepo;
+	
+	@Autowired
+	AttendanceRepository attendRepo;
 
 	@Override
 	public List<Attendance> getListOfClass() {
@@ -99,11 +102,41 @@ public class LecturerServiceImpl implements LecturerService {
 		return null;
 	}
 
-
+	@Override
+	public List<Schedule> getSchedules(){
+		return scheRepo.findAll();
+	}
 	
-
+	@Override
+	public Schedule getSchedulebyId(int id){
+		return scheRepo.getById(id);
+	}
 	
-	
-	
+	@Override
+	public Schedule saveSchedule(Schedule schedule) {
+		return scheRepo.save(schedule);
+	}
+			
+	@Override
+	public void createAttendanceData(int scheduleId) {
+		
+		Schedule schedule = scheRepo.getById(scheduleId);
+		
+		if(schedule.getAttendances().size()==0) {					
+			
+			Collection<Enrolment> enrolments = schedule.get_class().getEnrolments();
+			
+			for(Enrolment enrolment: enrolments) {
+				
+				Attendance attendance = new Attendance();
+				attendance.setSchedule(schedule);
+				attendance.setStudent(enrolment.getStudent());	
+				attendance.setSignIn(false);
+				attendance.setSignOut(false);
+				attendRepo.save(attendance);
+			}
+						
+		}
+	}
 
 }
