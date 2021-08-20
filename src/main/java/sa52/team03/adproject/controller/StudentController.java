@@ -1,11 +1,16 @@
 package sa52.team03.adproject.controller;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,9 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 import sa52.team03.adproject.domain.Attendance;
 import sa52.team03.adproject.domain.QRCodeData;
 import sa52.team03.adproject.domain.Schedule;
+import sa52.team03.adproject.domain.Student;
 import sa52.team03.adproject.repo.AttendanceRepository;
 import sa52.team03.adproject.repo.ScheduleRepository;
 import sa52.team03.adproject.repo.StudentRepository;
+import sa52.team03.adproject.service.StudentService;
+import sa52.team03.adproject.utils.TokenUtil;
 
 @CrossOrigin(origins= "http://localhost:3000")
 @RestController
@@ -31,6 +39,12 @@ public class StudentController {
 	
 	@Autowired
 	StudentRepository studRepo;
+	
+    @Autowired
+    TokenUtil tokenUtil;
+    
+    @Autowired
+    StudentService studentService;
 	
 	@PostMapping("/scanQRCode")
 	public ResponseEntity<HttpStatus> scanQRCodeData(@RequestBody QRCodeData qrCodeData) {		
@@ -89,4 +103,13 @@ public class StudentController {
 		}		
 		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);				
 	}
+	
+    @GetMapping("class-module")
+    public List<Map<String, Object>> getStudentClassModuleScheduleAttendance(HttpServletRequest request){
+        String token = request.getHeader("JwtToken");
+        String userName = tokenUtil.getUsernameFromToken(token);
+        Student student = studentService.getStudentByUserName(userName);
+        return studentService.getStudentClassModuleScheduleAttendance(student);
+    }
+    
 }
