@@ -65,28 +65,21 @@ public class LecturerController {
 			Schedule s = lservice.getSchedule(i);
 			allScheduleObject.add(s);
 		}
+		
 		return allScheduleObject;
 		
 	}
 	
 	
-	@GetMapping(value = {"class/schedules/attendance/present","class/schedules/attendance/present/{ids}"})
-	public List<Student> getAttendancePresent(@PathVariable Optional <Integer> ids){
+	@GetMapping(value = {"class/schedules/attendance/present/{ids}"})
+	public List<Student> getAttendancePresent(@PathVariable int ids ){
 		List<Schedule> allSchedules = getSchedules();
-		int maxScheduleid = lservice.getmaxScheduleid();
-		Schedule maxSchedule = lservice.getSchedule(maxScheduleid);
-		int id = 0;
+		Schedule selectedSchedule = lservice.getSchedule(ids);
 		
-		if (ids.isPresent()) {
-			id = ids.get();
-		}
-		else {
-			id = maxScheduleid;
-		}	
 
 		List<Student> present = new ArrayList<>();	
 		List<Student> absent = new ArrayList<>();
-		List<Attendance> e = lservice.getAttendancebyScheudleID(id);
+		List<Attendance> e = lservice.getAttendancebyScheudleID(ids);
 		
 		for (Attendance a : e) {
 			
@@ -99,22 +92,14 @@ public class LecturerController {
 		return present;		
 	}
 	
-	@GetMapping(value = {"class/schedules/attendance/absent","class/schedules/attendance/absent/{ids}"})
-	public List<Student> getAttendanceAbsent(@PathVariable Optional <Integer> ids){
+	@GetMapping(value = {"class/schedules/attendance/absent/{ids}"})
+	public List<Student> getAttendanceAbsent(@PathVariable int ids){
 		List<Schedule> allSchedules = getSchedules();
-		int maxScheduleid = lservice.getmaxScheduleid();
-		Schedule maxSchedule = lservice.getSchedule(maxScheduleid);
-		int id = 0;
+		Schedule currentSchedule = lservice.getSchedule(ids);
 		
-		if (ids.isPresent()) {
-			id = ids.get();
-		}
-		else {
-			id = maxScheduleid;
-		}	
 
 		List<Student> absent = new ArrayList<>();	
-		List<Attendance> e = lservice.getAttendancebyScheudleID(id);
+		List<Attendance> e = lservice.getAttendancebyScheudleID(ids);
 		
 		for (Attendance a : e) {
 			if (a.getSignIn() == null || a.getSignOut() == null || a.getSignIn() == false || a.getSignOut() == false)
@@ -126,23 +111,14 @@ public class LecturerController {
 	
 	
 	
-	@GetMapping(value = {"class/schedules/attendance/overview","class/schedules/attendance/overview/{ids}"})
-	public Map<String, Integer> showAttendanceRate(@PathVariable Optional <Integer> ids){
+	@GetMapping(value = {"class/schedules/attendance/overview/{ids}"})
+	public Map<String, Integer> showAttendanceRate(@PathVariable Integer ids){
 		List<Schedule> allSchedules = getSchedules();
-		int maxScheduleid = lservice.getmaxScheduleid();
-		Schedule maxSchedule = lservice.getSchedule(maxScheduleid);
-		int id = 0;
 		
-		if (ids.isPresent()) {
-			id = ids.get();
-		}
-		else {
-			id = maxScheduleid;
-		}
 		List<Student> present = new ArrayList<>();
 		List<Student> absent = new ArrayList<>();
-		List<Attendance> e = lservice.getAttendancebyScheudleID(id);
-		Schedule schedule = lservice.getSchedule(id);
+		List<Attendance> e = lservice.getAttendancebyScheudleID(ids);
+		Schedule schedule = lservice.getSchedule(ids);
 		
 		for (Attendance a : e) {
 			if (a.getSignIn() == null || a.getSignOut() == null)

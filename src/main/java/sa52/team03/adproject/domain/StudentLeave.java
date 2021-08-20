@@ -118,6 +118,11 @@ public class StudentLeave {
 	public void setStatus(Status status) {
 		this.status = status;
 	}
+	
+	 
+	public String toStringforStatus(Status status) {
+		return status.toString();
+	}
 
 	@Override
 	public String toString() {

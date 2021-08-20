@@ -7,5 +7,5 @@ import sa52.team03.adproject.domain.Module;
 public interface ModuleRepository extends JpaRepository<Module, Integer> {
 	
 	public Module findByCode(String code);
-
+	
 }
