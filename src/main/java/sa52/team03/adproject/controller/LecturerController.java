@@ -1,7 +1,10 @@
 package sa52.team03.adproject.controller;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -252,6 +255,33 @@ public class LecturerController {
 				
 		return attendRateData;
 		
+	}
+	
+	
+	
+	@GetMapping("/schedules/todaySchedule")
+	public List<Schedule> getLecturerTodaySchedule(){
+		
+		Lecturer lecturer = lecturerService.getLecturerbyUsername("lecturer1@email.com");
+									
+		return lecturerService.getLecturerTodaySchedules(lecturer);
+	}
+	
+	
+	@GetMapping("/schedules/schedulesByRange/{startDateinMs}/{endDateinMs}")
+	public List<Schedule> getLecturerSchedulesByRange(@PathVariable long startDateinMs, @PathVariable long endDateinMs){	
+		
+		
+				
+		LocalDate startDate = Instant.ofEpochMilli(startDateinMs).atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDate endDate = Instant.ofEpochMilli(endDateinMs).atZone(ZoneId.systemDefault()).toLocalDate();
+		
+		Lecturer lecturer = lecturerService.getLecturerbyUsername("lecturer1@email.com");
+		
+		System.out.println(startDate);
+		System.out.println(endDate);
+									
+		return lecturerService.getLecturerSchedulesByRange(lecturer, startDate, endDate);
 	}
 					
 

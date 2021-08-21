@@ -1,5 +1,7 @@
 package sa52.team03.adproject.service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -137,6 +139,44 @@ public class LecturerServiceImpl implements LecturerService {
 			}
 						
 		}
+	}
+	
+	@Override
+	public List<Schedule> getLecturerTodaySchedules(Lecturer lecturer){
+		
+		List<Schedule> lecturerTodaySchedules = new ArrayList<Schedule>();
+		
+		List<Schedule> todaySchedules = scheRepo.getTodaySchedules(LocalDate.now());
+		
+		for(Schedule schedule : todaySchedules) {
+			
+			if(schedule.get_class().getLecturer() == lecturer) {
+				lecturerTodaySchedules.add(schedule);
+			}
+			
+		}				
+		
+		return lecturerTodaySchedules;
+	}
+	
+	@Override
+	public List<Schedule> getLecturerSchedulesByRange(Lecturer lecturer, LocalDate startDate, LocalDate endDate){
+		
+		List<Schedule> lecturerSchedulesByRange = new ArrayList<Schedule>();
+		
+		List<Schedule> schedules = scheRepo.findAll();
+		
+		for(Schedule schedule : schedules) {
+			
+			if( (schedule.getDate().isAfter(startDate) && schedule.getDate().isBefore(endDate)) ||  schedule.getDate().isEqual(startDate) || schedule.getDate().isEqual(endDate)) {
+				
+				lecturerSchedulesByRange.add(schedule);
+				
+			}
+		}
+		
+		
+		return lecturerSchedulesByRange;
 	}
 
 }

@@ -1,10 +1,12 @@
 package sa52.team03.adproject.repo;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import sa52.team03.adproject.domain.Lecturer;
 import sa52.team03.adproject.domain.Schedule;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
@@ -17,4 +19,9 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
 	
 	@Query("SELECT MAX(id) from Schedule")
 	public int getmaxScheduleid();
+	
+	@Query("Select s from Schedule s where s.date = :todayDate")
+	public List<Schedule> getTodaySchedules(LocalDate todayDate);
+	
+	
 }

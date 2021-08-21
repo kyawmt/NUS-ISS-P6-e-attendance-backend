@@ -1,5 +1,6 @@
 package sa52.team03.adproject.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import sa52.team03.adproject.domain.Attendance;
@@ -36,5 +37,9 @@ public interface LecturerService {
 	public Schedule saveSchedule(Schedule schedule);	
 	
 	public void createAttendanceData(int scheduleId);
+	
+	public List<Schedule> getLecturerTodaySchedules(Lecturer lecturer);
+	
+	public List<Schedule> getLecturerSchedulesByRange(Lecturer lecturer, LocalDate startDate, LocalDate endDate);
 
 }
