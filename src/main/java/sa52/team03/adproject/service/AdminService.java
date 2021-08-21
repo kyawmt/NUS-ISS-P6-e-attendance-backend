@@ -43,4 +43,14 @@ public interface AdminService {
 	public Map<String,Object> createClassMap(Class c);
 	
 	public Map<String,Object> createStudentMap(Student s,int classId);
+	
+	public int getStudentAbsenceTimes(int classId,int studentId);
+	
+	public int predictStudentPassOrNot(int classId,int studentId);
+	
+	public void updateClassStudentPredictedGrade(int classId) ;
+	
+	public List<Schedule> getClassFutureSchedule(int classId);
+	
+	public void updateClassPredictedAttendanceRate(int classId);
 }

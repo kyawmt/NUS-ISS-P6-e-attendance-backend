@@ -220,4 +220,64 @@ public class AdminServiceImpl implements AdminService {
 		
 		return studentMap;
 	}
+	
+	
+	
+	
+	// For MAchine Learning Model 1--predict class student pass or not
+	@Override
+	public int getStudentAbsenceTimes(int classId,int studentId) {
+		List<Schedule> classScheduleUntilNow=this.getClassScheduleUntilNow(classId);
+		int studentAbsenceTimes=(1-calculateStudentAttendanceRate(classId,studentId)/100)*classScheduleUntilNow.size();
+		return studentAbsenceTimes;
+	}
+	
+	@Override
+	public int predictStudentPassOrNot(int classId,int studentId) {
+		// get studentAbsenceTimes from last method,pass into python
+		// get the python predicted result and save as predictStudentPassOrNot.
+		int predictStudentPassOrNot=0;
+		return predictStudentPassOrNot;
+	}
+	
+	@Override
+	public void updateClassStudentPredictedGrade(int classId) {
+		List<Student> classStudents=getStudentsByClassId(classId);
+		for(Enrolment e: enrolmentRepo.findAll()) {
+			for(Student s:classStudents) {
+				if(e.get_class().getId()==classId && e.getStudent().getId()==s.getId()) {
+					if( predictStudentPassOrNot(classId,s.getId())==1)
+						e.setPredictedPerformance("pass");
+					else
+						e.setPredictedPerformance("fail");
+				}
+			}
+		}
+	}
+	
+	// For MAchine Learning Model 2 -- predict class attendance rate
+	@Override
+	public List<Schedule> getClassFutureSchedule(int classId){
+		List<Schedule> classFutureSchedule=new ArrayList<>();
+		
+		for(Schedule s:scheduleRepo.findAll()) {
+			if(s.get_class().getId()==classId && s.getDate().isAfter(LocalDate.now()))
+				classFutureSchedule.add(s);
+		}
+		
+		return classFutureSchedule;
+	}
+	
+	@Override
+	public void updateClassPredictedAttendanceRate(int classId) {
+		
+		for(Schedule s: getClassFutureSchedule(classId)) {
+			// pass s.getdate() into python and retrieve the prediction attendance rate
+			// store in predictedAtteandanceRate;
+			int predictedAtteandanceRate=0;
+			s.setPredictedAttendance(predictedAtteandanceRate);
+		}
+		
+	}
+
 }
