@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,8 @@ import sa52.team03.adproject.repo.ScheduleRepository;
 import sa52.team03.adproject.repo.StudentLeaveRepository;
 import sa52.team03.adproject.repo.StudentRepository;
 import sa52.team03.adproject.repo.ModuleRepository;
+import sa52.team03.adproject.domain.Class;
+import sa52.team03.adproject.repo.EnrolmentRepository;
 
 @Service
 public class LecturerServiceImpl implements LecturerService {
@@ -50,6 +54,12 @@ public class LecturerServiceImpl implements LecturerService {
 	
 	@Autowired
 	AttendanceRepository attendRepo;
+
+	@Autowired
+	EnrolmentRepository enrolmentRepo;
+
+	@Autowired
+	AdminService adminService;
 
 	@Override
 	public List<Attendance> getListOfClass() {
@@ -178,5 +188,95 @@ public class LecturerServiceImpl implements LecturerService {
 		
 		return lecturerSchedulesByRange;
 	}
+
+	@Override
+	public List<Class> getClassesByLecturerId(int id) {
+		return crepo.findClassByLecturerId(id);
+	}
+
+	@Override
+	public Map<String, Object> createClassMap(Class c) {
+		String classAttendanceRate = adminService.calculateClassAttendanceRate(c.getId());
+		int classSize = calculateClassSize(c.getId());
+		int classPredictedPassRate = calculateClassPerformanceRate(c.getId(), "1");
+		int classPredictedFailRate = calculateClassPerformanceRate(c.getId(), "0");
+		
+		Map<String,Object> classMap=new HashMap<>();
+		classMap.put("id", c.getId());
+		classMap.put("modulename", c.getModule().getName());
+		classMap.put("modulecode", c.getModule().getCode());
+		classMap.put("moduleid", c.getModule().getId());
+		classMap.put("code", c.getCode());
+		classMap.put("year", c.getAcademicPeriod().getYear());
+		classMap.put("semester", c.getAcademicPeriod().getSemester());
+		classMap.put("rate",classAttendanceRate);
+		classMap.put("performancePass", classPredictedPassRate);
+		classMap.put("performanceFail", classPredictedFailRate);
+		classMap.put("size", classSize);
+		
+		return classMap;
+
+	}
+
+	@Override
+	public Class getClassById(int classId) {
+		return crepo.findById(classId).get();
+	}
+	
+	public int calculateClassSize(int classId) {
+		return enrolmentRepo.findByClassId(classId).size();
+	}
+	
+	public int calculateClassPerformanceRate(int classId, String x) {
+		List<Enrolment> enrolmentList = enrolmentRepo.findByClassId(classId);
+		int counter = 0;
+		
+		for(Enrolment e : enrolmentList) {
+			
+			if(e.getPredictedPerformance().contains(x)) {
+				counter++;
+			}
+		}	
+		
+		return counter;
+	}
+
+	@Override
+	public List<Schedule> getSchedulesByClassId(int classId) {
+		return srepo.findByClassId(classId);
+	}
+
+	@Override
+	public Map<String, Object> createClassAttendanceMap(Schedule s) {
+		
+		Map<String,Object> classAttendanceMap=new HashMap<>();
+		classAttendanceMap.put("id", s.getId());
+		classAttendanceMap.put("date", s.getDate());
+		classAttendanceMap.put("predictedAttendanceRate", s.getPredictedAttendance());
+		classAttendanceMap.put("actualAttendanceRate", calculateScheduleAttendanceRate(s));
+		
+		return classAttendanceMap;
+	}
+	
+	public int calculateScheduleAttendanceRate(Schedule schedule) {
+			
+			int classSize= calculateClassSize(schedule.get_class().getId());
+			
+			List<Attendance> attendedStudent=new ArrayList<>();
+			double classAttendanceRate=0;
+					
+			for(Attendance a:arepo.findAll()) {
+				if(a.getSchedule().getId() == schedule.getId()) {
+					if(a.getSignIn()==true && a.getSignOut()==true)
+						attendedStudent.add(a);
+				}
+			}
+			
+			if(classSize != 0)
+				classAttendanceRate=(double)(attendedStudent.size()/classSize)*100;
+			
+			return (int)classAttendanceRate;
+	}
+	
 
 }

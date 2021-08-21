@@ -1,6 +1,5 @@
 package sa52.team03.adproject.repo;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,5 +15,8 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
 	
 	@Query("Select c.id from Class c where c.lecturer.id = :id")
 	public List<Integer> findClassIDbyLecID(@Param("id") int id);
+	
+	@Query("SELECT c FROM Class c WHERE c.lecturer.id = :id")
+	public List<Class> findClassByLecturerId(@Param("id") int id);
 
 }
