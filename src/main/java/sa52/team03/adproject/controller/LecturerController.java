@@ -32,7 +32,7 @@ import sa52.team03.adproject.domain.StudentLeave;
 import sa52.team03.adproject.service.AdminService;
 import sa52.team03.adproject.domain.Class;
 import sa52.team03.adproject.service.LecturerService;
-import sa52.team03.adproject.service.MachineLearningPythonServices;
+
 
 @CrossOrigin(origins= "http://localhost:3000")
 @RestController
@@ -225,8 +225,10 @@ public class LecturerController {
 				  for (int j = 0; j<predict.length; j++) {
 					  if (es[j].getStudent().getId() == studentid[j]) {
 						  String predict1 = predict[j].replaceAll("\\D+","");
+						  if (es[j].getPredictedPerformance() == null) {
 						  es[j].setPredictedPerformance(predict1);
 						  lecturerService.saveEnrolment(es[j]);
+					  }
 					  }
 				  }
 		
