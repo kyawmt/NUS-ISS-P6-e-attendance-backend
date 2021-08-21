@@ -15,5 +15,8 @@ public interface EnrolmentRepository extends JpaRepository<Enrolment, Integer> {
 
     @Query("SELECT e._class FROM Enrolment e WHERE e.student = :student AND e._class.academicPeriod = :academicPeriod")
     public List<Class> findClassesByStudent(@Param("student") Student student, @Param("academicPeriod") AcademicPeriod academicPeriod);
+    
+    @Query("SELECT e FROM Enrolment e WHERE e._class.id = :classid")
+    public List<Enrolment> findEnrolmentByClassid(@Param("classid") int classid);
 
 }

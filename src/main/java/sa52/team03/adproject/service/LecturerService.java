@@ -3,7 +3,10 @@ package sa52.team03.adproject.service;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.data.repository.query.Param;
+
 import sa52.team03.adproject.domain.Attendance;
+import sa52.team03.adproject.domain.Enrolment;
 import sa52.team03.adproject.domain.Lecturer;
 import sa52.team03.adproject.domain.Schedule;
 import sa52.team03.adproject.domain.StudentLeave;
@@ -41,5 +44,8 @@ public interface LecturerService {
 	public List<Schedule> getLecturerTodaySchedules(Lecturer lecturer);
 	
 	public List<Schedule> getLecturerSchedulesByRange(Lecturer lecturer, LocalDate startDate, LocalDate endDate);
+	
+	public List<Enrolment> findEnrolmentByClassid(int classid );
 
+	public void saveEnrolment(Enrolment e);
 }

@@ -15,6 +15,7 @@ import sa52.team03.adproject.domain.Schedule;
 import sa52.team03.adproject.domain.StudentLeave;
 import sa52.team03.adproject.repo.AttendanceRepository;
 import sa52.team03.adproject.repo.ClassRepository;
+import sa52.team03.adproject.repo.EnrolmentRepository;
 import sa52.team03.adproject.repo.LecturerRepository;
 import sa52.team03.adproject.repo.ScheduleRepository;
 import sa52.team03.adproject.repo.StudentLeaveRepository;
@@ -50,6 +51,9 @@ public class LecturerServiceImpl implements LecturerService {
 	
 	@Autowired
 	AttendanceRepository attendRepo;
+	
+	@Autowired
+	EnrolmentRepository erepo;
 
 	@Override
 	public List<Attendance> getListOfClass() {
@@ -178,5 +182,16 @@ public class LecturerServiceImpl implements LecturerService {
 		
 		return lecturerSchedulesByRange;
 	}
+	
+	@Override
+	public List<Enrolment> findEnrolmentByClassid (int classid ) {
+		return erepo.findEnrolmentByClassid(classid);
+	}
+	
+	@Override
+	public void saveEnrolment(Enrolment e) {
+		erepo.save(e);
+	}
+
 
 }
