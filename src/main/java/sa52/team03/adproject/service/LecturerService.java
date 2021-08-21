@@ -2,7 +2,9 @@ package sa52.team03.adproject.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
+import sa52.team03.adproject.domain.Class;
 import sa52.team03.adproject.domain.Attendance;
 import sa52.team03.adproject.domain.Lecturer;
 import sa52.team03.adproject.domain.Schedule;
@@ -41,5 +43,15 @@ public interface LecturerService {
 	public List<Schedule> getLecturerTodaySchedules(Lecturer lecturer);
 	
 	public List<Schedule> getLecturerSchedulesByRange(Lecturer lecturer, LocalDate startDate, LocalDate endDate);
+
+	public List<Class> getClassesByLecturerId(int id);
+
+	public Map<String, Object> createClassMap(Class c);
+
+	public Class getClassById(int classId);
+
+	public List<Schedule> getSchedulesByClassId(int classId);
+
+	public Map<String, Object> createClassAttendanceMap(Schedule s);
 
 }
