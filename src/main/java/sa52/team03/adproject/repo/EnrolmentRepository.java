@@ -19,4 +19,7 @@ public interface EnrolmentRepository extends JpaRepository<Enrolment, Integer> {
     @Query("SELECT e FROM Enrolment e WHERE e._class.id = :classid")
     public List<Enrolment> findEnrolmentByClassid(@Param("classid") int classid);
 
+	@Query("SELECT e FROM Enrolment e WHERE e._class.id = :classId")
+	List<Enrolment> findByClassId(@Param("classId") int classId);
+
 }

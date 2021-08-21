@@ -2,6 +2,7 @@ package sa52.team03.adproject.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.repository.query.Param;
 
@@ -10,6 +11,7 @@ import sa52.team03.adproject.domain.Enrolment;
 import sa52.team03.adproject.domain.Lecturer;
 import sa52.team03.adproject.domain.Schedule;
 import sa52.team03.adproject.domain.StudentLeave;
+import sa52.team03.adproject.domain.Class;
 
 public interface LecturerService {
 	
@@ -46,6 +48,16 @@ public interface LecturerService {
 	public List<Schedule> getLecturerSchedulesByRange(Lecturer lecturer, LocalDate startDate, LocalDate endDate);
 	
 	public List<Enrolment> findEnrolmentByClassid(int classid );
+	
+	public List<Class> getClassesByLecturerId(int id);
+
+	public Map<String, Object> createClassMap(Class c);
+
+	public Class getClassById(int classId);
+
+	public List<Schedule> getSchedulesByClassId(int classId);
+
+	public Map<String, Object> createClassAttendanceMap(Schedule s);
 
 	public void saveEnrolment(Enrolment e);
 }

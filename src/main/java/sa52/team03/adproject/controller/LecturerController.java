@@ -10,7 +10,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +30,7 @@ import sa52.team03.adproject.domain.Schedule;
 import sa52.team03.adproject.domain.Student;
 import sa52.team03.adproject.domain.StudentLeave;
 import sa52.team03.adproject.service.AdminService;
+import sa52.team03.adproject.domain.Class;
 import sa52.team03.adproject.service.LecturerService;
 import sa52.team03.adproject.service.MachineLearningPythonServices;
 
@@ -356,10 +356,36 @@ public class LecturerController {
 		System.out.println(endDate);
 									
 		return lecturerService.getLecturerSchedulesByRange(lecturer, startDate, endDate);
-	}
-		
+	}				
 	
-	
-	
+	@GetMapping("/classes/{lecturerId}")
+	public List<Map<String,Object>> getClassInfoByLecturerId(@PathVariable int lecturerId){
+		List<Map<String,Object>> classMapList = new ArrayList<>();
+		List<Class> classes = lecturerService.getClassesByLecturerId(lecturerId);
 
+		for(Class c : classes) {
+				Map<String, Object> classMap = lecturerService.createClassMap(c);
+				classMapList.add(classMap);
+		}
+		return classMapList;
+	}
+	
+	@GetMapping("/class/{classId}")
+	public Map<String, Object> getClassInfoByClassId(@PathVariable int classId) {
+		Class c = lecturerService.getClassById(classId);
+		return lecturerService.createClassMap(c);
+	}
+	
+	@GetMapping("/classDates/{classId}")
+	public List<Map<String, Object>> getClassAttendenceByClassId(@PathVariable int classId) {
+		List<Map<String,Object>> classAttendanceMapList = new ArrayList<>();
+		List<Schedule> schedules = lecturerService.getSchedulesByClassId(classId);
+		
+		for(Schedule s : schedules) {
+			Map<String, Object> classAttendanceMap = lecturerService.createClassAttendanceMap(s);
+			classAttendanceMapList.add(classAttendanceMap);
+		}
+		return classAttendanceMapList;
+	}
+	
 }
