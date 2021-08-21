@@ -182,14 +182,17 @@ public class LecturerServiceImpl implements LecturerService {
 		
 		for(Schedule schedule : schedules) {
 			
-			if( (schedule.getDate().isAfter(startDate) && schedule.getDate().isBefore(endDate)) ||  schedule.getDate().isEqual(startDate) || schedule.getDate().isEqual(endDate)) {
+			if(schedule.get_class().getLecturer() == lecturer) {
 				
-				lecturerSchedulesByRange.add(schedule);
-				
-			}
+				if( (schedule.getDate().isAfter(startDate) && schedule.getDate().isBefore(endDate)) ||  schedule.getDate().isEqual(startDate) || schedule.getDate().isEqual(endDate)) {
+					
+					lecturerSchedulesByRange.add(schedule);
+					
+				}				
+			}	
+						
 		}
-		
-		
+				
 		return lecturerSchedulesByRange;
 	}
 	

@@ -343,18 +343,13 @@ public class LecturerController {
 	
 	
 	@GetMapping("/schedules/schedulesByRange/{startDateinMs}/{endDateinMs}")
-	public List<Schedule> getLecturerSchedulesByRange(@PathVariable long startDateinMs, @PathVariable long endDateinMs){	
-		
-		
+	public List<Schedule> getLecturerSchedulesByRange(@PathVariable long startDateinMs, @PathVariable long endDateinMs){				
 				
 		LocalDate startDate = Instant.ofEpochMilli(startDateinMs).atZone(ZoneId.systemDefault()).toLocalDate();
 		LocalDate endDate = Instant.ofEpochMilli(endDateinMs).atZone(ZoneId.systemDefault()).toLocalDate();
 		
-		Lecturer lecturer = lecturerService.getLecturerbyUsername("lecturer1@email.com");
-		
-		System.out.println(startDate);
-		System.out.println(endDate);
-									
+		Lecturer lecturer = lecturerService.getLecturerbyUsername("lecturer1@email.com");		
+											
 		return lecturerService.getLecturerSchedulesByRange(lecturer, startDate, endDate);
 	}				
 	
