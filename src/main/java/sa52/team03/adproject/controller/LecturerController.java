@@ -175,7 +175,7 @@ public class LecturerController {
 		
 	}
 	
-	@GetMapping (value = {"/class/{classid}"})
+	@GetMapping (value = {"class/predict/{classid}"})
 	public void savePrediction (@PathVariable Integer classid) throws Exception {
 		
 		URL url = new URL(" http://127.0.0.1:5000/predict");
@@ -225,10 +225,10 @@ public class LecturerController {
 				  for (int j = 0; j<predict.length; j++) {
 					  if (es[j].getStudent().getId() == studentid[j]) {
 						  String predict1 = predict[j].replaceAll("\\D+","");
-						  if (es[j].getPredictedPerformance() == null) {
+						  
 						  es[j].setPredictedPerformance(predict1);
 						  lecturerService.saveEnrolment(es[j]);
-					  }
+					  
 					  }
 				  }
 		
