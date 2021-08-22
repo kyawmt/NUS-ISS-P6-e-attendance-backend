@@ -1,5 +1,7 @@
 package sa52.team03.adproject.service;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -240,6 +242,7 @@ public class AdminServiceImpl implements AdminService {
 		return predictStudentPassOrNot;
 	}
 	
+	// in lecturer
 	@Override
 	public void updateClassStudentPredictedGrade(int classId) {
 		List<Student> classStudents=getStudentsByClassId(classId);
@@ -269,8 +272,16 @@ public class AdminServiceImpl implements AdminService {
 	}
 	
 	@Override
-	public void updateClassPredictedAttendanceRate(int classId) {
+	public void updateClassPredictedAttendanceRate (int classId) throws Exception {
 		
+		URL url = new URL(" http://127.0.0.1:5000/predictattendance");
+		HttpURLConnection con = (HttpURLConnection)url.openConnection();
+		con.setRequestMethod("POST");
+		con.setRequestProperty("Content-Type","application/json; utf-8");
+		con.setDoOutput(true);
+		
+		
+				
 		for(Schedule s: getClassFutureSchedule(classId)) {
 			// pass s.getdate() into python and retrieve the prediction attendance rate
 			// store in predictedAtteandanceRate;
