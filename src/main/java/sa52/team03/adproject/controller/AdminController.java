@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import sa52.team03.adproject.domain.Class;
 import sa52.team03.adproject.domain.Lecturer;
 import sa52.team03.adproject.domain.Module;
+import sa52.team03.adproject.domain.Schedule;
 import sa52.team03.adproject.domain.Student;
 import sa52.team03.adproject.service.AdminService;
 
@@ -127,6 +128,12 @@ public class AdminController {
 		}
 		
 		return studentMapList;
+	}
+	
+	//testing for ML predicted attendance
+	@GetMapping(value = "predict/{classId")
+	public void testoifpredictedschedulecan (@PathVariable int classID) throws Exception{
+		adminService.updateClassPredictedAttendanceRate(classID);
 	}
 	
 }

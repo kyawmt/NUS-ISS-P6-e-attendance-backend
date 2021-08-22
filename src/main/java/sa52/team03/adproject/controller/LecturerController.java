@@ -224,8 +224,7 @@ public class LecturerController {
 				  
 				  for (int j = 0; j<predict.length; j++) {
 					  if (es[j].getStudent().getId() == studentid[j]) {
-						  String predict1 = predict[j].replaceAll("\\D+","");
-						  
+						  String predict1 = predict[j].replaceAll("\\D+","");						  
 						  es[j].setPredictedPerformance(predict1);
 						  lecturerService.saveEnrolment(es[j]);
 					  

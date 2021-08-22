@@ -1,11 +1,17 @@
 package sa52.team03.adproject.service;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -240,6 +246,7 @@ public class AdminServiceImpl implements AdminService {
 		return predictStudentPassOrNot;
 	}
 	
+	// in lecturer
 	@Override
 	public void updateClassStudentPredictedGrade(int classId) {
 		List<Student> classStudents=getStudentsByClassId(classId);
@@ -268,14 +275,54 @@ public class AdminServiceImpl implements AdminService {
 		return classFutureSchedule;
 	}
 	
+
+	
 	@Override
-	public void updateClassPredictedAttendanceRate(int classId) {
+	public void updateClassPredictedAttendanceRate (int classId) throws Exception {
 		
+		URL url = new URL(" http://127.0.0.1:5000/predictattendance");
+		HttpURLConnection con = (HttpURLConnection)url.openConnection();
+		con.setRequestMethod("POST");
+		con.setRequestProperty("Content-Type","application/json; utf-8");
+		con.setDoOutput(true);
+		
+		List<LocalDate> futureScheduleDate = new ArrayList<>();	
+		List<Schedule> ss = new ArrayList<>();
+				
 		for(Schedule s: getClassFutureSchedule(classId)) {
-			// pass s.getdate() into python and retrieve the prediction attendance rate
-			// store in predictedAtteandanceRate;
-			int predictedAtteandanceRate=0;
-			s.setPredictedAttendance(predictedAtteandanceRate);
+			futureScheduleDate.add(s.getDate());
+			ss.add(s);
+		}
+		
+		Schedule [] sss = (Schedule []) ss.toArray(new Schedule[ss.size()]);
+		
+		
+		JSONArray a1 = new JSONArray();
+		for (LocalDate ld : futureScheduleDate) {
+			a1.put(ld);
+		}
+		
+		try(OutputStream os = con.getOutputStream()) {
+		    os.write(a1.toString().getBytes("UTF-8"));		
+		}
+		
+		try(BufferedReader br = new BufferedReader(
+				  new InputStreamReader(con.getInputStream(), "utf-8"))) {
+				  StringBuilder response = new StringBuilder();
+				  String responseLine = null;
+				  while ((responseLine = br.readLine()) != null) {
+					  response.append(responseLine.trim());
+				  }
+				  String [] predict = response.toString().split(",");
+				  
+				  
+				  for (int j = 0; j<predict.length; j++) {
+					  Schedule s = sss[j];
+					  String predict1 = predict[j].replaceAll("\\D+","");
+					  int a = Integer.parseInt(predict1);
+					  s.setPredictedAttendance(a);
+					  scheduleRepo.save(s);					  
+				  }	
 		}
 		
 	}
