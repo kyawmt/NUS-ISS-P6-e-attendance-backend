@@ -53,4 +53,5 @@ public interface AdminService {
 	public List<Schedule> getClassFutureSchedule(int classId);
 	
 	public void updateClassPredictedAttendanceRate(int classId) throws Exception;
+	
 }
