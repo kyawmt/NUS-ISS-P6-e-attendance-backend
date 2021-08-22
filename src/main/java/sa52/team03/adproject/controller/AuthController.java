@@ -52,19 +52,36 @@ public class AuthController {
 		Lecturer lecturer = lecturerRepository.findByUserName(username);
 		Student student = studentRepository.findByUserName(username);
 
-		if ((admin != null && admin.getPassword().equals(password))
-				|| (lecturer != null && lecturer.getPassword().equals(password))
-				|| (student != null && student.getPassword().equals(password))) {
+		String token = tokenUtil.generateToken(username);
+		HttpHeaders headers = new HttpHeaders();
 
-			String token = tokenUtil.generateToken(username);
-			HttpHeaders headers = new HttpHeaders();
+		if (admin != null && admin.getPassword().equals(password)) {
+			
+			headers.add("role", "admin");
+			headers.add("fullname", admin.getFirstName()+" "+admin.getLastName());
 			headers.add("JwtToken", token);
 
-			return new ResponseEntity<>(headers, HttpStatus.OK);
+		} else if (lecturer != null && lecturer.getPassword().equals(password)) {
+			
+			headers.add("role", "lecturer");
+			headers.add("fullname", lecturer.getFirstName()+" "+lecturer.getLastName());
+			headers.add("JwtToken", token);
+
+		} else if (student != null && student.getPassword().equals(password)) {
+			
+			headers.add("role", "student");
+			headers.add("fullname", student.getFirstName()+" "+student.getLastName());
+			headers.add("JwtToken", token);
 
 		} else {
 
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		}
+		headers.add("Access-Control-Expose-Headers", "role");
+		headers.add("Access-Control-Expose-Headers", "fullname");
+		headers.add("Access-Control-Expose-Headers", "JwtToken");
+
+		return new ResponseEntity<>(headers, HttpStatus.OK);
+
 	}
 }
