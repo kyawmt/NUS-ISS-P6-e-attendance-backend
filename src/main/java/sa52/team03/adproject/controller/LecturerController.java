@@ -134,13 +134,14 @@ public class LecturerController {
 		Schedule schedule = lecturerService.getSchedule(ids);
 		
 		for (Attendance a : e) {
-			if (a.getSignIn() == null || a.getSignOut() == null)
+			if (a.getSignIn() == false|| a.getSignOut() == false)
 				absent.add(a.getStudent());
 			else
 				present.add(a.getStudent());
 		}
 		
 		int totalSize = present.size() + absent.size();
+		System.out.println(totalSize);
 		List<StudentLeave> sl = lecturerService.getAll();
 		List<Student> absentwithValidReason = new ArrayList<>();
 		List<StudentLeave> sl2 = new ArrayList<>();
@@ -160,20 +161,38 @@ public class LecturerController {
 			
 		}	
 		
+		String moduleName = schedule.get_class().getModule().getName();
+		LocalDate scheduleDate = schedule.getDate();
 		
 		
 		int absentwreason = absentwithValidReason.size()*100 / totalSize;
 		int absentworeason = absent.size()*100/totalSize;
 		int presentpercent = present.size()*100/totalSize;
 		
+		
+		
 		Map<String, Integer> overview = new HashMap();
 		overview.put("AbsentwithvalidReason",absentwreason);
 		overview.put("AbsentwithoutvalidReason",absentworeason);
 		overview.put("Present",presentpercent);
 		
+		
 		return overview;
 		
 	}
+	@GetMapping(value = {"schedule/{ids}"})
+	public Map<String, String> getnameanddate(@PathVariable Integer ids){
+		Schedule schedule = lecturerService.getSchedule(ids);
+		String moduleName = schedule.get_class().getModule().getName();
+		String scheduleDate = schedule.getDate().toString();
+		
+		Map<String, String> overview = new HashMap();
+		overview.put("moduleName",moduleName);
+		overview.put("scheduleDate",scheduleDate);
+		
+		return overview;
+	}
+	
 	
 	@GetMapping (value = {"class/predict/{classid}"})
 	public void savePrediction (@PathVariable Integer classid) throws Exception {
