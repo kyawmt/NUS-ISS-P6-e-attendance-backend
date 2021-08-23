@@ -15,7 +15,6 @@ import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import sa52.team03.adproject.domain.AcademicPeriod;
 import sa52.team03.adproject.domain.Attendance;
 import sa52.team03.adproject.domain.Class;
 import sa52.team03.adproject.domain.Enrolment;
@@ -23,7 +22,6 @@ import sa52.team03.adproject.domain.Lecturer;
 import sa52.team03.adproject.domain.Module;
 import sa52.team03.adproject.domain.Schedule;
 import sa52.team03.adproject.domain.Student;
-import sa52.team03.adproject.repo.AcademicPeriodRepository;
 import sa52.team03.adproject.repo.AttendanceRepository;
 import sa52.team03.adproject.repo.ClassRepository;
 import sa52.team03.adproject.repo.EnrolmentRepository;
@@ -45,9 +43,6 @@ public class AdminServiceImpl implements AdminService {
 	ClassRepository classRepo;
 
 	@Autowired
-	AcademicPeriodRepository academicPeriodRepo;
-
-	@Autowired
 	ScheduleRepository scheduleRepo;
 
 	@Autowired
@@ -62,11 +57,6 @@ public class AdminServiceImpl implements AdminService {
 	@Override
 	public List<Class> getClasses() {
 		return classRepo.findAll();
-	}
-
-	@Override
-	public Class saveClass(Class _class) {
-		return classRepo.save(_class);
 	}
 
 	@Override
@@ -349,26 +339,6 @@ public class AdminServiceImpl implements AdminService {
 			}
 		}
 
-	}
-
-	@Override
-	public List<AcademicPeriod> getAcademicPeriods() {
-		return academicPeriodRepo.findAll();
-	}
-
-	@Override
-	public AcademicPeriod getAcademicPeriodsById(int id) {
-		return academicPeriodRepo.getById(id);
-	}
-
-	@Override
-	public List<Class> getclasses() {
-		return classRepo.findAll();
-	}
-
-	@Override
-	public void deleteclasses(int id) {
-		classRepo.deleteById(id);
 	}
 
 }

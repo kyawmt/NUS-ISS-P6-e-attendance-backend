@@ -12,8 +12,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import org.apache.commons.lang3.RandomStringUtils;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -24,7 +22,7 @@ public class Class {
 	
 	private Integer size;
 	
-	private String code= "CLASS" + RandomStringUtils.randomNumeric(5);
+	private String code;
 	
 	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	private AcademicPeriod academicPeriod;
