@@ -404,4 +404,27 @@ public class AdminServiceImpl implements AdminService {
 
 	}
 
+	@Override
+	public Map<String, Object> createValidationMap(String toCheck, String moduleValidation) {
+		
+		Map<String,Object> moduleValidationMap=new HashMap<>();
+		
+		if(toCheck.contains("name")) {
+			if(moduleRepo.findByName(moduleValidation) == null) {
+				moduleValidationMap.put("modulename", "true");
+			} else {
+				moduleValidationMap.put("modulename", "false");
+			}
+		}
+		
+		if(toCheck.contains("code")) {
+			if(moduleRepo.findByCode(moduleValidation) == null) {
+				moduleValidationMap.put("modulecode", "true");
+			} else {
+				moduleValidationMap.put("modulecode", "false");
+			}		
+		}
+		
+		return moduleValidationMap;
+	}
 }

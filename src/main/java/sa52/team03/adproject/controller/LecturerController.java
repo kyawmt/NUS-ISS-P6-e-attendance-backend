@@ -394,4 +394,20 @@ public class LecturerController {
 		return classAttendanceMapList;
 	}
 	
+	@GetMapping("/prediction/{classId}/{index}")
+	public List<Map<String, Object>> getStudentPredictedAttendance(@PathVariable int classId, @PathVariable int index) {
+		
+		List<Map<String, Object>> studentMapList = new ArrayList<>();
+		List<Integer> studentIds = lecturerService.getStudentIdByPredictedPerformance(classId, String.valueOf(index));
+		List<Schedule> schedules = lecturerService.getSchedulesByClassId(classId);
+		
+		for(int id : studentIds) {
+			Map<String, Object> studentMap = lecturerService.createStudentMap(id, schedules);
+			studentMapList.add(studentMap);
+		}
+
+		
+		return studentMapList;
+	}
+	
 }

@@ -14,6 +14,7 @@ import sa52.team03.adproject.domain.Attendance;
 import sa52.team03.adproject.domain.Enrolment;
 import sa52.team03.adproject.domain.Lecturer;
 import sa52.team03.adproject.domain.Schedule;
+import sa52.team03.adproject.domain.Student;
 import sa52.team03.adproject.domain.StudentLeave;
 import sa52.team03.adproject.repo.AttendanceRepository;
 import sa52.team03.adproject.repo.ClassRepository;
@@ -295,6 +296,53 @@ public class LecturerServiceImpl implements LecturerService {
 			
 			return (int)classAttendanceRate;
 	}
+
+	@Override
+	public List<Integer> getStudentIdByPredictedPerformance(int classId, String i) {
+		
+		return enrolmentRepo.findStudentIdByClassId(classId, i);
+
+	}
+
+	@Override
+	public Map<String, Object> createStudentMap(int id, List<Schedule> schedules) {
+		
+		Student studentDetails = sturepo.findById(id).get();
+		
+		Map<String,Object> studentAttendanceMap=new HashMap<>();
+		studentAttendanceMap.put("id", studentDetails.getId());
+		studentAttendanceMap.put("firstname", studentDetails.getFirstName());
+		studentAttendanceMap.put("lastname", studentDetails.getLastName());
+		studentAttendanceMap.put("studentId", studentDetails.getStudentId());
+		studentAttendanceMap.put("username", studentDetails.getUserName());
+		studentAttendanceMap.put("attendancerate", calculateStudentAttendanceRate(id, schedules));
+
+
+		return studentAttendanceMap;
+	}
 	
+	public int calculateStudentAttendanceRate(int id, List<Schedule> schedules) {
+		
+		int totalClasses = 0;
+		int studentPresentRate = 0;
+		double studentAttendanceRate = 0;
+		
+		for(Schedule s : schedules) {
+			for(Attendance a:arepo.findAll()) {
+				if(a.getSchedule().getId() == s.getId() && a.getStudent().getId() == id) {
+					if(a.getSignIn()==true && a.getSignOut()==true) {
+						studentPresentRate++;
+					}
+					totalClasses++;
+				}
+			}
+		}
+		
+		if(totalClasses != 0)
+			studentAttendanceRate=(double)(studentPresentRate/totalClasses)*100;
+		
+		return (int)studentAttendanceRate;
+		
+	}
 
 }

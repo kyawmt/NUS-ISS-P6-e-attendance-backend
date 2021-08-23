@@ -60,4 +60,9 @@ public interface LecturerService {
 	public Map<String, Object> createClassAttendanceMap(Schedule s);
 
 	public void saveEnrolment(Enrolment e);
+	
+	public List<Integer> getStudentIdByPredictedPerformance(int classId, String i);
+
+	public Map<String, Object> createStudentMap(int id, List<Schedule> s);
+
 }

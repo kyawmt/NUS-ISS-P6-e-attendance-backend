@@ -196,4 +196,9 @@ public class AdminController {
 		adminService.updateClassPredictedAttendanceRate(classID);
 	}
 	
+	@GetMapping("/modules/validation/{toCheck}/{moduleValidation}")
+	public Map<String, Object> getValidationForModule(@PathVariable String toCheck, @PathVariable String moduleValidation) {
+		return adminService.createValidationMap(toCheck, moduleValidation);
+	}
+	
 }

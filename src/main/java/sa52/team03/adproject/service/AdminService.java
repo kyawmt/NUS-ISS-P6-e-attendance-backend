@@ -72,4 +72,5 @@ public interface AdminService {
 	
 	public void updateClassPredictedAttendanceRate(int classId) throws Exception;
 	
+	public Map<String, Object> createValidationMap(String toCheck, String moduleValidation);
 }
