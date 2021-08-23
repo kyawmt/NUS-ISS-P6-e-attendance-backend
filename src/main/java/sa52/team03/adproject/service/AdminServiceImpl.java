@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import sa52.team03.adproject.domain.Admin;
+import sa52.team03.adproject.repo.AdminRepository;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,9 @@ public class AdminServiceImpl implements AdminService {
 	ModuleRepository moduleRepo;
 
 	@Autowired
+	AdminRepository adminRepo;
+
+	@Autowired
 	ClassRepository classRepo;
 
 	@Autowired
@@ -58,6 +62,45 @@ public class AdminServiceImpl implements AdminService {
 
 	@Autowired
 	EnrolmentRepository enrolmentRepo;
+
+	@Override
+	public List<Student> getStudents() {
+		return studentRepo.findAll();
+	}
+
+	@Override
+	public Student getStudentById(int id) {
+		return studentRepo.findById(id).get();
+	}
+
+	@Override
+	public Student saveStudent(Student student) {
+		return studentRepo.save(student);
+	}
+
+	@Override
+	public void deleteStudent(int id) {
+		studentRepo.deleteById(id);
+	}
+
+	@Override
+	public Boolean isStudentExist(int id, String userName) {
+		for (Student s : studentRepo.findAll()) {
+			if (s.getId() == id)
+				continue;
+			if (s.getUserName().equalsIgnoreCase(userName))
+				return true;
+		}
+		for (Lecturer l : lecturerRepo.findAll()) {
+			if (l.getUserName().equalsIgnoreCase(userName))
+				return true;
+		}
+		for (Admin a : adminRepo.findAll()) {
+			if (a.getUserName().equalsIgnoreCase(userName))
+				return true;
+		}
+		return false;
+	}
 
 	@Override
 	public List<Class> getClasses() {
@@ -87,6 +130,25 @@ public class AdminServiceImpl implements AdminService {
 	@Override
 	public void deleteLecturer(int id) {
 		lecturerRepo.deleteById(id);
+	}
+
+	@Override
+	public Boolean isLecturerExist(int id, String userName) {
+		for (Lecturer l : lecturerRepo.findAll()) {
+			if (l.getId() == id)
+				continue;
+			if (l.getUserName().equalsIgnoreCase(userName))
+				return true;
+		}
+		for (Student s : studentRepo.findAll()) {
+			if (s.getUserName().equalsIgnoreCase(userName))
+				return true;
+		}
+		for (Admin a : adminRepo.findAll()) {
+			if (a.getUserName().equalsIgnoreCase(userName))
+				return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -370,5 +432,27 @@ public class AdminServiceImpl implements AdminService {
 	public void deleteclasses(int id) {
 		classRepo.deleteById(id);
 	}
-
+    @Override
+    public Map<String, Object> createValidationMap(String toCheck, String moduleValidation) {
+        
+        Map<String,Object> moduleValidationMap=new HashMap<>();
+        
+        if(toCheck.contains("name")) {
+            if(moduleRepo.findByName(moduleValidation) == null) {
+                moduleValidationMap.put("modulename", "true");
+            } else {
+                moduleValidationMap.put("modulename", "false");
+            }
+        }
+        
+        if(toCheck.contains("code")) {
+            if(moduleRepo.findByCode(moduleValidation) == null) {
+                moduleValidationMap.put("modulecode", "true");
+            } else {
+                moduleValidationMap.put("modulecode", "false");
+            }        
+        }
+        
+        return moduleValidationMap;
+    }
 }

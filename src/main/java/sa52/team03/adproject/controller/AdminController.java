@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -121,6 +122,42 @@ public class AdminController {
 		return "success";
 	}
 
+    @GetMapping("/students")
+    public List<Student> getStudents() {
+        return adminService.getStudents();
+    }
+    
+    @GetMapping("/students/{id}")
+    public Student getStudentById(@PathVariable int id) {
+        return adminService.getStudentById(id);
+    }
+
+    @PostMapping("/students")
+    public Student addStudent(@RequestBody Student student) {
+        return adminService.saveStudent(student);
+    }
+    
+    @PutMapping("/students/{id}")
+    public Student updateStudent(@PathVariable int id, @RequestBody Student student) {
+        Student updatedStudent = adminService.getStudentById(id);
+        
+        updatedStudent.setFirstName(student.getFirstName());
+        updatedStudent.setLastName(student.getLastName());
+        updatedStudent.setUserName(student.getUserName());
+        
+        return adminService.saveStudent(updatedStudent);
+    }
+    
+    @DeleteMapping("/students/{id}")
+    public void deleteStudent(@PathVariable int id) {
+        adminService.deleteStudent(id);
+    }
+    
+    @GetMapping("/students/check-exist/{id}")
+    public Boolean isStudentExist(@PathVariable int id, @RequestParam String userName) {
+        return adminService.isStudentExist(id, userName);
+    }
+    
 	@GetMapping("/lecturers")
 	public List<Lecturer> getLecturers() {
 		return adminService.getLecturers();
@@ -153,6 +190,17 @@ public class AdminController {
 		adminService.deleteLecturer(id);
 	}
 
+    @GetMapping("/lecturers/check-exist/{id}")
+    public Boolean isLecturerExist(@PathVariable int id, @RequestParam String userName) {
+        return adminService.isLecturerExist(id, userName);
+    }
+    
+    @GetMapping("/modules/validation/{toCheck}/{moduleValidation}")
+    public Map<String, Object> getValidationForModule(@PathVariable String toCheck, @PathVariable String moduleValidation) {
+        return adminService.createValidationMap(toCheck, moduleValidation);
+    }
+
+	
 	@GetMapping("/modules")
 	public List<Module> getModule() {
 		return adminService.getModules();
