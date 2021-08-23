@@ -23,12 +23,18 @@ public interface AdminService {
 	public void deleteLecturer(int id);
 	
 	public List<Module> getModules();
-	
+		
 	public Module getModuleById(int id);
 	
 	public Module saveModule(Module module);
 	
 	public void deleteModule(int id);
+	
+	public List<Schedule> getSchedules();
+		
+	public Schedule saveSchedule(Schedule schedule);
+	
+	public void deleteSchedule(int id);
 	
 	public List<Class> getClassByModuleId(int id);
 	

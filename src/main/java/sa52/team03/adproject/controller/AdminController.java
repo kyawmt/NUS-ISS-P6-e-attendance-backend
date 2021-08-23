@@ -31,6 +31,24 @@ public class AdminController {
 	@Autowired
 	AdminService adminService;
 	
+	@GetMapping("/schedules")
+	public List<Schedule> getSchedules(){
+		return adminService.getSchedules();
+	}
+	
+	@PostMapping("/schedules")
+	public Schedule addSchedule(@RequestBody String scheduleJson){
+		
+		
+		
+		return adminService.getSchedules().get(0);
+	}
+	
+	@DeleteMapping("/schedules/{id}")
+	public void deleteSchedule(@PathVariable int id) {
+		adminService.deleteSchedule(id);
+	}
+	
 	@GetMapping("/lecturers")
 	public List<Lecturer> getLecturers(){
 		return adminService.getLecturers();

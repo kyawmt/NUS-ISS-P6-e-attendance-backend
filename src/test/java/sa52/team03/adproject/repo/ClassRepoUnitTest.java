@@ -50,7 +50,7 @@ public class ClassRepoUnitTest {
 		
 		Lecturer lecturer1 = new Lecturer("L1234", "Fan", "Liu", "lecturer1@email.com","123456");		
 		Module module1 = new Module("COMP101", "Introduction to Computing", 75);		
-		AcademicPeriod ap1 = new AcademicPeriod("AY2020/2021", Semester.SEMESTER1, date1, date2);	
+		AcademicPeriod ap1 = new AcademicPeriod(2020, Semester.SEMESTER1);	
 		Class class1 = new Class(1, ap1, module1, lecturer1);
 		Class savedclass1 = crepo.save(class1);
 		
@@ -80,7 +80,7 @@ public class ClassRepoUnitTest {
 		
 		Module module2 = new Module("MATH101", "Introduction to Mathematics", 75);
 		Lecturer lecturer2 = new Lecturer("L2345", "Cher Wah", "Tan", "lecturer2@email.com","123456");
-		AcademicPeriod ap2 = new AcademicPeriod("AY2021/2022", Semester.SEMESTER2, date1, date2);
+		AcademicPeriod ap2 = new AcademicPeriod(2021, Semester.SEMESTER2);
 		Class class2 = crepo.findBySize(1);
 		
 		class2.setModule(module2);
