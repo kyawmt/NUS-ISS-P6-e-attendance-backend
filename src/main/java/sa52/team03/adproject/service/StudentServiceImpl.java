@@ -17,6 +17,7 @@ import sa52.team03.adproject.domain.Student;
 import sa52.team03.adproject.repo.AcademicPeriodRepository;
 import sa52.team03.adproject.repo.AttendanceRepository;
 import sa52.team03.adproject.repo.EnrolmentRepository;
+import sa52.team03.adproject.repo.ScheduleRepository;
 import sa52.team03.adproject.repo.StudentRepository;
 
 @Service
@@ -33,6 +34,9 @@ public class StudentServiceImpl implements StudentService {
     
     @Autowired
     AcademicPeriodRepository apRepo;
+    
+    @Autowired
+	ScheduleRepository scheRepo;
     
     @Override
     public Student getStudentByUserName(String userName) {
@@ -94,6 +98,27 @@ public class StudentServiceImpl implements StudentService {
     
     public AcademicPeriod getAcademicPeriodByDate(LocalDate date) {
         return apRepo.findAcademicPeriodByDate(date);
+    }
+    
+    
+    @Override
+    public Schedule getScheduleById(int scheduleId) {
+    	return scheRepo.getById(scheduleId);
+    }
+    
+    @Override
+    public Student findStudentByUserName(String userName) {
+    	return studentRepo.findByUserName(userName);
+    }
+    
+    @Override
+    public Attendance findAttendanceByScheduleAndStudent(Schedule schedule, Student student) {
+    	return attendanceRepo.findByScheduleAndStudent(schedule, student);
+    }
+    
+    @Override
+    public void saveAttendance(Attendance attendance) {
+    	attendanceRepo.save(attendance);
     }
 
 }

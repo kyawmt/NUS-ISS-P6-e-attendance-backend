@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -32,6 +34,7 @@ import sa52.team03.adproject.domain.StudentLeave;
 import sa52.team03.adproject.service.AdminService;
 import sa52.team03.adproject.domain.Class;
 import sa52.team03.adproject.service.LecturerService;
+import sa52.team03.adproject.utils.TokenUtil;
 
 
 @CrossOrigin(origins= "http://localhost:3000")
@@ -45,7 +48,8 @@ public class LecturerController {
 	@Autowired
 	private AdminService adminService;
 	
-	
+	@Autowired
+	private TokenUtil tokenUtil;
 	
 	public List<Integer> getClassesID(){
 		String username = "tan";
@@ -335,21 +339,27 @@ public class LecturerController {
 	
 	
 	@GetMapping("/schedules/todaySchedule")
-	public List<Schedule> getLecturerTodaySchedule(){
+	public List<Schedule> getLecturerTodaySchedule(HttpServletRequest request){
 		
-		Lecturer lecturer = lecturerService.getLecturerbyUsername("lecturer1@email.com");
+		String token = request.getHeader("JwtToken");
+        String userName = tokenUtil.getUsernameFromToken(token);
+		
+		Lecturer lecturer = lecturerService.getLecturerbyUsername(userName);
 									
 		return lecturerService.getLecturerTodaySchedules(lecturer);
 	}
 	
 	
 	@GetMapping("/schedules/schedulesByRange/{startDateinMs}/{endDateinMs}")
-	public List<Schedule> getLecturerSchedulesByRange(@PathVariable long startDateinMs, @PathVariable long endDateinMs){				
+	public List<Schedule> getLecturerSchedulesByRange(@PathVariable long startDateinMs, @PathVariable long endDateinMs, HttpServletRequest request){
+		
+		String token = request.getHeader("JwtToken");
+        String userName = tokenUtil.getUsernameFromToken(token);
 				
 		LocalDate startDate = Instant.ofEpochMilli(startDateinMs).atZone(ZoneId.systemDefault()).toLocalDate();
 		LocalDate endDate = Instant.ofEpochMilli(endDateinMs).atZone(ZoneId.systemDefault()).toLocalDate();
 		
-		Lecturer lecturer = lecturerService.getLecturerbyUsername("lecturer1@email.com");		
+		Lecturer lecturer = lecturerService.getLecturerbyUsername(userName);		
 											
 		return lecturerService.getLecturerSchedulesByRange(lecturer, startDate, endDate);
 	}				

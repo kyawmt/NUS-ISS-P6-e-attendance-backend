@@ -30,16 +30,7 @@ import sa52.team03.adproject.utils.TokenUtil;
 @RestController
 @RequestMapping(path = "/api/student/")
 public class StudentController {
-	
-	@Autowired
-	AttendanceRepository attendRepo;
-	
-	@Autowired
-	ScheduleRepository scheRepo;
-	
-	@Autowired
-	StudentRepository studRepo;
-	
+		
     @Autowired
     TokenUtil tokenUtil;
     
@@ -49,25 +40,21 @@ public class StudentController {
 	@PostMapping("/scanQRCode")
 	public ResponseEntity<HttpStatus> scanQRCodeData(@RequestBody QRCodeData qrCodeData) {		
 				
-		Schedule schedule = scheRepo.getById(qrCodeData.getScheduleId());		
+		Schedule schedule = studentService.getScheduleById(qrCodeData.getScheduleId());		
 		String signInOutId = qrCodeData.getSignInSignOutId();
-		String option = qrCodeData.getOption();
-				
-		//Attendance attendance = attendRepo.findByScheduleAndStudent(schedule, studRepo.findByUserName(qrCodeData.getStudentUserName()));		
+		String option = qrCodeData.getOption();							
 		
 		if(option.equals("signIn")) {
 			if(schedule.getSignInId()!=null) {
-				if( signInOutId.equals(schedule.getSignInId().split("_")[1]) && Long.parseLong(schedule.getSignInId().split("_")[0]) > Instant.now().toEpochMilli()){					
-					//attendance.setSignIn(true);
-					//attendRepo.save(attendance);					
+				if( signInOutId.equals(schedule.getSignInId().split("_")[1]) && Long.parseLong(schedule.getSignInId().split("_")[0]) > Instant.now().toEpochMilli()){				
+									
 					return new ResponseEntity<>(HttpStatus.OK);					
 				}			
 			}				
 		}else if(option.equals("signOut")) {			
 			if(schedule.getSignOutId()!=null) {				
 				if(signInOutId.equals(schedule.getSignOutId().split("_")[1]) && Long.parseLong(schedule.getSignOutId().split("_")[0]) > Instant.now().toEpochMilli()){
-					//attendance.setSignOut(true);
-					//attendRepo.save(attendance);					
+									
 					return new ResponseEntity<>(HttpStatus.OK);					
 				}			
 			}			
@@ -78,17 +65,17 @@ public class StudentController {
 	@PostMapping("/takeAttendance")
 	public ResponseEntity<HttpStatus> takeAttendance(@RequestBody QRCodeData qrCodeData) {		
 				
-		Schedule schedule = scheRepo.getById(qrCodeData.getScheduleId());		
+		Schedule schedule = studentService.getScheduleById(qrCodeData.getScheduleId());		
 		String signInOutId = qrCodeData.getSignInSignOutId();
 		String option = qrCodeData.getOption();
 				
-		Attendance attendance = attendRepo.findByScheduleAndStudent(schedule, studRepo.findByUserName(qrCodeData.getStudentUserName()));		
+		Attendance attendance = studentService.findAttendanceByScheduleAndStudent(schedule, studentService.findStudentByUserName(qrCodeData.getStudentUserName()));		
 		
 		if(option.equals("signIn")) {
 			if(schedule.getSignInId()!=null) {
 				if( signInOutId.equals(schedule.getSignInId().split("_")[1]) && Long.parseLong(schedule.getSignInId().split("_")[0]) > Instant.now().toEpochMilli()){					
 					attendance.setSignIn(true);
-					attendRepo.save(attendance);					
+					studentService.saveAttendance(attendance);					
 					return new ResponseEntity<>(HttpStatus.OK);					
 				}			
 			}				
@@ -96,7 +83,7 @@ public class StudentController {
 			if(schedule.getSignOutId()!=null) {				
 				if(signInOutId.equals(schedule.getSignOutId().split("_")[1]) && Long.parseLong(schedule.getSignOutId().split("_")[0]) > Instant.now().toEpochMilli()){
 					attendance.setSignOut(true);
-					attendRepo.save(attendance);					
+					studentService.saveAttendance(attendance);					
 					return new ResponseEntity<>(HttpStatus.OK);					
 				}			
 			}			
