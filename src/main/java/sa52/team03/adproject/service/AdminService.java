@@ -74,6 +74,8 @@ public interface AdminService {
 
 	public Student getStudentById(int id);
 
+	public Map<String, Object> createValidationMap(String toCheck, String moduleValidation);
+
 	public Student saveStudent(Student student);
 
 	public void deleteStudent(int id);
@@ -81,7 +83,5 @@ public interface AdminService {
 	public Boolean isStudentExist(int id, String userName);
 
 	public Boolean isLecturerExist(int id, String userName);
-
-	public Map<String, Object> createValidationMap(String toCheck, String moduleValidation);
 
 }
