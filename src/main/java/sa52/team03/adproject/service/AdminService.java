@@ -3,16 +3,19 @@ package sa52.team03.adproject.service;
 import java.util.List;
 import java.util.Map;
 
+import sa52.team03.adproject.domain.AcademicPeriod;
+import sa52.team03.adproject.domain.Class;
+import sa52.team03.adproject.domain.Lecturer;
 import sa52.team03.adproject.domain.Module;
 import sa52.team03.adproject.domain.Schedule;
 import sa52.team03.adproject.domain.Student;
-import sa52.team03.adproject.domain.Class;
-import sa52.team03.adproject.domain.Lecturer;
 
 
 public interface AdminService {
 	
 	public List<Class> getClasses();
+	
+	public Class saveClass(Class c);
 
 	public List<Lecturer> getLecturers();
 	
@@ -59,5 +62,13 @@ public interface AdminService {
 	public List<Schedule> getClassFutureSchedule(int classId);
 	
 	public void updateClassPredictedAttendanceRate(int classId) throws Exception;
+
+	public List<AcademicPeriod> getAcademicPeriods();
+	
+	public AcademicPeriod getAcademicPeriodsById(int id);
+
+	public List<Class> getclasses();
+
+	public void deleteclasses(int id);
 	
 }
