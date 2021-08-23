@@ -15,6 +15,7 @@ import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import sa52.team03.adproject.domain.Admin;
 import sa52.team03.adproject.domain.Attendance;
 import sa52.team03.adproject.domain.Class;
 import sa52.team03.adproject.domain.Enrolment;
@@ -22,6 +23,7 @@ import sa52.team03.adproject.domain.Lecturer;
 import sa52.team03.adproject.domain.Module;
 import sa52.team03.adproject.domain.Schedule;
 import sa52.team03.adproject.domain.Student;
+import sa52.team03.adproject.repo.AdminRepository;
 import sa52.team03.adproject.repo.AttendanceRepository;
 import sa52.team03.adproject.repo.ClassRepository;
 import sa52.team03.adproject.repo.EnrolmentRepository;
@@ -53,10 +55,52 @@ public class AdminServiceImpl implements AdminService {
 
 	@Autowired
 	EnrolmentRepository enrolmentRepo;
+	
+	@Autowired
+	AdminRepository adminRepo;
 
 	@Override
 	public List<Class> getClasses() {
 		return classRepo.findAll();
+	}
+	
+    @Override 
+    public List<Student> getStudents(){
+        return studentRepo.findAll();
+    }
+    
+    @Override 
+    public Student getStudentById(int id) {
+        return studentRepo.findById(id).get();
+    }
+    
+    @Override 
+    public Student saveStudent(Student student) {
+        return studentRepo.save(student);
+    }
+    
+    @Override 
+    public void deleteStudent(int id) {
+        studentRepo.deleteById(id);
+    }
+    
+	@Override
+	public Boolean isStudentExist(int id, String userName) {
+		for (Student s : studentRepo.findAll()) {
+			if (s.getId() == id)
+				continue;
+			if (s.getUserName().equalsIgnoreCase(userName))
+				return true;
+		}
+		for (Lecturer l : lecturerRepo.findAll()) {
+			if(l.getUserName().equalsIgnoreCase(userName))
+				return true;
+		}
+		for (Admin a : adminRepo.findAll()) {
+			if (a.getUserName().equalsIgnoreCase(userName))
+				return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -77,6 +121,25 @@ public class AdminServiceImpl implements AdminService {
 	@Override
 	public void deleteLecturer(int id) {
 		lecturerRepo.deleteById(id);
+	}
+	
+	@Override
+	public Boolean isLecturerExist(int id, String userName) {			
+		for (Lecturer l : lecturerRepo.findAll()) {
+			if (l.getId() == id)
+				continue;
+			if (l.getUserName().equalsIgnoreCase(userName))
+				return true;
+		}
+		for (Student s : studentRepo.findAll()) {
+			if (s.getUserName().equalsIgnoreCase(userName))
+				return true;
+		}
+		for (Admin a : adminRepo.findAll()) {
+			if (a.getUserName().equalsIgnoreCase(userName))
+				return true;
+		}
+		return false;
 	}
 
 	@Override

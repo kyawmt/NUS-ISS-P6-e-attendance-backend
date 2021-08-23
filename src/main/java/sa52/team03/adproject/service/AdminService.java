@@ -13,6 +13,16 @@ import sa52.team03.adproject.domain.Lecturer;
 public interface AdminService {
 	
 	public List<Class> getClasses();
+	
+    public List<Student> getStudents();
+    
+    public Student getStudentById(int id);
+    
+    public Student saveStudent(Student student);
+    
+    public void deleteStudent(int id);
+    
+    public Boolean isStudentExist(int id, String userName);
 
 	public List<Lecturer> getLecturers();
 	
@@ -21,6 +31,8 @@ public interface AdminService {
 	public Lecturer getLecturerById(int id);
 	
 	public void deleteLecturer(int id);
+	
+    public Boolean isLecturerExist(int id, String userName);
 	
 	public List<Module> getModules();
 		
