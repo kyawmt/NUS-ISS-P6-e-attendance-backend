@@ -19,24 +19,30 @@ public class Schedule {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	
-	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Class _class;
-	
+
 	private LocalDate date;
-	
+
 	private String signInId;
-	
+
 	private String signOutId;
-	
+
 	private Integer predictedAttendance;
-	
+
 	@OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
 	private Collection<Attendance> attendances;
 
 	public Schedule() {
 		super();
+	}
+
+	public Schedule(Class _class, LocalDate date) {
+		super();
+		this._class = _class;
+		this.date = date;
 	}
 
 	public Schedule(Class _class, LocalDate date, String signInId, String signOutId) {
@@ -120,5 +126,5 @@ public class Schedule {
 				+ ", signOutId=" + signOutId + ", predictedAttendance=" + predictedAttendance + ", attendances="
 				+ attendances + "]";
 	}
-	
+
 }

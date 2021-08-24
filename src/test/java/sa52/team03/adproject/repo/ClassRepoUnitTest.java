@@ -50,7 +50,7 @@ public class ClassRepoUnitTest {
 		
 		Lecturer lecturer1 = new Lecturer("L1234", "Fan", "Liu", "lecturer1@email.com","123456");		
 		Module module1 = new Module("COMP101", "Introduction to Computing", 75);		
-		AcademicPeriod ap1 = new AcademicPeriod("AY2020/2021", Semester.SEMESTER1, date1, date2);	
+		AcademicPeriod ap1 = new AcademicPeriod(2020, Semester.SEMESTER1);	
 		Class class1 = new Class(1, ap1, module1, lecturer1);
 		Class savedclass1 = crepo.save(class1);
 		
@@ -64,7 +64,7 @@ public class ClassRepoUnitTest {
 		
 		Module module1 = mrepo.findByCode("COMP101");
 		Lecturer lecturer1 = lrepo.findByUserName("lecturer1@email.com");
-		AcademicPeriod ap1 = aprepo.findByYear("AY2020/2021");
+		AcademicPeriod ap1 = aprepo.getById(2);
 		
 		module1.setCode("COMP102");
 		Module savedmodule1 = mrepo.save(module1);
@@ -80,7 +80,7 @@ public class ClassRepoUnitTest {
 		
 		Module module2 = new Module("MATH101", "Introduction to Mathematics", 75);
 		Lecturer lecturer2 = new Lecturer("L2345", "Cher Wah", "Tan", "lecturer2@email.com","123456");
-		AcademicPeriod ap2 = new AcademicPeriod("AY2021/2022", Semester.SEMESTER2, date1, date2);
+		AcademicPeriod ap2 = new AcademicPeriod(2021, Semester.SEMESTER2);
 		Class class2 = crepo.findBySize(1);
 		
 		class2.setModule(module2);
@@ -112,7 +112,7 @@ public class ClassRepoUnitTest {
 		
 		Module module1 = mrepo.findByCode("MATH101");
 		Lecturer lecturer1 = lrepo.findByUserName("lecturer2@email.com");
-		AcademicPeriod ap1 = aprepo.findByYear("AY2021/2022");
+		AcademicPeriod ap1 = aprepo.getById(2);
 		Class class2 = crepo.findBySize(1);
 		
 		assertNull(class2);
@@ -130,7 +130,7 @@ public class ClassRepoUnitTest {
 		
 		Module module1 = mrepo.findByCode("MATH101");
 		Lecturer lecturer1 = lrepo.findByUserName("lecturer2@email.com");
-		AcademicPeriod ap1 = aprepo.findByYear("AY2021/2022");
+		AcademicPeriod ap1 = aprepo.getById(3);
 		
 		mrepo.delete(module1);
 		Class class1 = crepo.findBySize(1);
@@ -158,7 +158,7 @@ public class ClassRepoUnitTest {
 		lrepo.delete(lecturer1);
 		
 		Module module1 = mrepo.findByCode("MATH101");
-		AcademicPeriod ap1 = aprepo.findByYear("AY2021/2022");
+		AcademicPeriod ap1 = aprepo.getById(4);
 		
 		assertNotNull(savedclass1);
 		mrepo.delete(module1);
@@ -168,7 +168,7 @@ public class ClassRepoUnitTest {
 	
 	public void DeleteAcademicPeriod() {
 		
-		AcademicPeriod ap1 = aprepo.findByYear("AY2021/2022");
+		AcademicPeriod ap1 = aprepo.getById(5);
 		aprepo.delete(ap1);
 		
 		Module module1 = mrepo.findByCode("MATH101");

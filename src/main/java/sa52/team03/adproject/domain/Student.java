@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import org.apache.commons.lang3.RandomStringUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -17,31 +19,34 @@ public class Student {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	
-	private String studentId;
-	
+
+	private String studentId = "STU" + RandomStringUtils.randomNumeric(5);
+
 	private String firstName;
-	
+
 	private String lastName;
-	
+
 	private String userName;
-	
+
 	private String password;
 	
+	private boolean photoRegistered=false;
+
 	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
 	private Collection<Enrolment> enrolments;
-	
+
 	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
 	private Collection<Attendance> attendances;
-	
+
 	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
 	private Collection<StudentLeave> studentLeaves;
 
 	public Student() {
 		super();
+		
 	}
 
 	public Student(String studentId, String firstName, String lastName, String userName, String password) {
@@ -54,7 +59,8 @@ public class Student {
 	}
 
 	public Student(String studentId, String firstName, String lastName, String userName, String password,
-			Collection<Enrolment> enrolments, Collection<Attendance> attendances, Collection<StudentLeave> studentLeaves) {
+			Collection<Enrolment> enrolments, Collection<Attendance> attendances,
+			Collection<StudentLeave> studentLeaves) {
 		super();
 		this.studentId = studentId;
 		this.firstName = firstName;
@@ -78,6 +84,14 @@ public class Student {
 		return studentId;
 	}
 
+	public boolean isPhotoRegistered() {
+		return photoRegistered;
+	}
+
+	public void setPhotoRegistered(boolean isPhotoRegistered) {
+		this.photoRegistered = isPhotoRegistered;
+	}
+
 	public void setStudentId(String studentId) {
 		this.studentId = studentId;
 	}
@@ -97,7 +111,7 @@ public class Student {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-	
+
 	public String getUserName() {
 		return userName;
 	}
@@ -144,5 +158,5 @@ public class Student {
 				+ ", userName=" + userName + ", password=" + password + ", enrolments=" + enrolments + ", attendances="
 				+ attendances + ", studentLeaves=" + studentLeaves + "]";
 	}
-	
+
 }

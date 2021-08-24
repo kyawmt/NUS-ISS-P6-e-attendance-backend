@@ -3,59 +3,59 @@ package sa52.team03.adproject.service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import sa52.team03.adproject.domain.Attendance;
+import sa52.team03.adproject.domain.Class;
 import sa52.team03.adproject.domain.Enrolment;
 import sa52.team03.adproject.domain.Lecturer;
 import sa52.team03.adproject.domain.Schedule;
+import sa52.team03.adproject.domain.Student;
 import sa52.team03.adproject.domain.StudentLeave;
 import sa52.team03.adproject.repo.AttendanceRepository;
 import sa52.team03.adproject.repo.ClassRepository;
 import sa52.team03.adproject.repo.EnrolmentRepository;
 import sa52.team03.adproject.repo.LecturerRepository;
+import sa52.team03.adproject.repo.ModuleRepository;
 import sa52.team03.adproject.repo.ScheduleRepository;
 import sa52.team03.adproject.repo.StudentLeaveRepository;
 import sa52.team03.adproject.repo.StudentRepository;
-import sa52.team03.adproject.repo.ModuleRepository;
-import sa52.team03.adproject.domain.Class;
-import sa52.team03.adproject.repo.EnrolmentRepository;
 
 @Service
 public class LecturerServiceImpl implements LecturerService {
-	
+
 	@Autowired
 	LecturerRepository lrepo;
-	
+
 	@Autowired
 	ClassRepository crepo;
-	
+
 	@Autowired
 	ScheduleRepository srepo;
-	
+
 	@Autowired
 	AttendanceRepository arepo;
-	
+
 	@Autowired
 	ModuleRepository mrepo;
-	
+
 	@Autowired
 	StudentRepository sturepo;
-	
+
 	@Autowired
 	StudentLeaveRepository leaverepo;
 
 	@Autowired
 	ScheduleRepository scheRepo;
-	
+
 	@Autowired
 	AttendanceRepository attendRepo;
-	
+
 	@Autowired
 	EnrolmentRepository erepo;
 
@@ -74,39 +74,39 @@ public class LecturerServiceImpl implements LecturerService {
 	@Override
 	public Lecturer getLecturerbyUsername(String username) {
 		return lrepo.findByUserName(username);
-	
+
 	}
-	
+
 	@Override
-	public List<Integer> findClassIDbyLecID(int id){
+	public List<Integer> findClassIDbyLecID(int id) {
 		return crepo.findClassIDbyLecID(id);
 	}
-	
+
 	@Override
-	public List<Integer> findScheduleByClassID(int id){
+	public List<Integer> findScheduleByClassID(int id) {
 		return srepo.findScheduleIDByClassID(id);
 	}
-	
-	@Override	
-	public List<Integer> getAttendanceIDbyScheduleID (int id) {
+
+	@Override
+	public List<Integer> getAttendanceIDbyScheduleID(int id) {
 		return arepo.getAttendanceIDbyScheduleID(id);
 	}
-	
+
 	@Override
-	public List<Attendance> getAttendancebyScheudleID (int id){
+	public List<Attendance> getAttendancebyScheudleID(int id) {
 		return arepo.getAttendancebyScheduleID(id);
 	}
-	
+
 	@Override
-	public List<StudentLeave> getAll(){
+	public List<StudentLeave> getAll() {
 		return leaverepo.findAll();
 	}
-	
+
 	@Override
 	public Schedule getSchedule(int id) {
 		return srepo.getById(id);
 	}
-	
+
 	@Override
 	public int getmaxScheduleid() {
 		return srepo.getmaxScheduleid();
@@ -119,93 +119,93 @@ public class LecturerServiceImpl implements LecturerService {
 	}
 
 	@Override
-	public List<Schedule> getSchedules(){
+	public List<Schedule> getSchedules() {
 		return scheRepo.findAll();
 	}
-	
+
 	@Override
-	public Schedule getSchedulebyId(int id){
+	public Schedule getSchedulebyId(int id) {
 		return scheRepo.getById(id);
 	}
-	
+
 	@Override
 	public Schedule saveSchedule(Schedule schedule) {
 		return scheRepo.save(schedule);
 	}
-			
+
 	@Override
 	public void createAttendanceData(int scheduleId) {
-		
+
 		Schedule schedule = scheRepo.getById(scheduleId);
-		
-		if(schedule.getAttendances().size()==0) {					
-			
+
+		if (schedule.getAttendances().size() == 0) {
+
 			Collection<Enrolment> enrolments = schedule.get_class().getEnrolments();
-			
-			for(Enrolment enrolment: enrolments) {
-				
+
+			for (Enrolment enrolment : enrolments) {
+
 				Attendance attendance = new Attendance();
 				attendance.setSchedule(schedule);
-				attendance.setStudent(enrolment.getStudent());	
+				attendance.setStudent(enrolment.getStudent());
 				attendance.setSignIn(false);
 				attendance.setSignOut(false);
 				attendRepo.save(attendance);
 			}
-						
+
 		}
 	}
-	
+
 	@Override
-	public List<Schedule> getLecturerTodaySchedules(Lecturer lecturer){
-		
+	public List<Schedule> getLecturerTodaySchedules(Lecturer lecturer) {
+
 		List<Schedule> lecturerTodaySchedules = new ArrayList<Schedule>();
-		
+
 		List<Schedule> todaySchedules = scheRepo.getTodaySchedules(LocalDate.now());
-		
-		for(Schedule schedule : todaySchedules) {
-			
-			if(schedule.get_class().getLecturer() == lecturer) {
+
+		for (Schedule schedule : todaySchedules) {
+
+			if (schedule.get_class().getLecturer() == lecturer) {
 				lecturerTodaySchedules.add(schedule);
 			}
-			
-		}				
-		
+
+		}
+
 		return lecturerTodaySchedules;
 	}
-	
+
 	@Override
-	public List<Schedule> getLecturerSchedulesByRange(Lecturer lecturer, LocalDate startDate, LocalDate endDate){
-		
+	public List<Schedule> getLecturerSchedulesByRange(Lecturer lecturer, LocalDate startDate, LocalDate endDate) {
+
 		List<Schedule> lecturerSchedulesByRange = new ArrayList<Schedule>();
-		
+
 		List<Schedule> schedules = scheRepo.findAll();
-		
-		for(Schedule schedule : schedules) {
-			
-			if(schedule.get_class().getLecturer() == lecturer) {
-				
-				if( (schedule.getDate().isAfter(startDate) && schedule.getDate().isBefore(endDate)) ||  schedule.getDate().isEqual(startDate) || schedule.getDate().isEqual(endDate)) {
-					
+
+		for (Schedule schedule : schedules) {
+
+			if (schedule.get_class().getLecturer() == lecturer) {
+
+				if ((schedule.getDate().isAfter(startDate) && schedule.getDate().isBefore(endDate))
+						|| schedule.getDate().isEqual(startDate) || schedule.getDate().isEqual(endDate)) {
+
 					lecturerSchedulesByRange.add(schedule);
-					
-				}				
-			}	
-						
+
+				}
+			}
+
 		}
-				
+
 		return lecturerSchedulesByRange;
 	}
-	
+
 	@Override
-	public List<Enrolment> findEnrolmentByClassid (int classid ) {
+	public List<Enrolment> findEnrolmentByClassid(int classid) {
 		return erepo.findEnrolmentByClassid(classid);
 	}
-	
+
 	@Override
 	public void saveEnrolment(Enrolment e) {
 		erepo.save(e);
 	}
-
 
 	@Override
 	public List<Class> getClassesByLecturerId(int id) {
@@ -218,8 +218,8 @@ public class LecturerServiceImpl implements LecturerService {
 		int classSize = calculateClassSize(c.getId());
 		int classPredictedPassRate = calculateClassPerformanceRate(c.getId(), "1");
 		int classPredictedFailRate = calculateClassPerformanceRate(c.getId(), "0");
-		
-		Map<String,Object> classMap=new HashMap<>();
+
+		Map<String, Object> classMap = new HashMap<>();
 		classMap.put("id", c.getId());
 		classMap.put("modulename", c.getModule().getName());
 		classMap.put("modulecode", c.getModule().getCode());
@@ -227,11 +227,11 @@ public class LecturerServiceImpl implements LecturerService {
 		classMap.put("code", c.getCode());
 		classMap.put("year", c.getAcademicPeriod().getYear());
 		classMap.put("semester", c.getAcademicPeriod().getSemester());
-		classMap.put("rate",classAttendanceRate);
+		classMap.put("rate", classAttendanceRate);
 		classMap.put("performancePass", classPredictedPassRate);
 		classMap.put("performanceFail", classPredictedFailRate);
 		classMap.put("size", classSize);
-		
+
 		return classMap;
 
 	}
@@ -240,22 +240,22 @@ public class LecturerServiceImpl implements LecturerService {
 	public Class getClassById(int classId) {
 		return crepo.findById(classId).get();
 	}
-	
+
 	public int calculateClassSize(int classId) {
 		return enrolmentRepo.findByClassId(classId).size();
 	}
-	
+
 	public int calculateClassPerformanceRate(int classId, String x) {
 		List<Enrolment> enrolmentList = enrolmentRepo.findByClassId(classId);
 		int counter = 0;
-		
-		for(Enrolment e : enrolmentList) {
-			
-			if(e.getPredictedPerformance().contains(x)) {
+
+		for (Enrolment e : enrolmentList) {
+
+			if (e.getPredictedPerformance().contains(x)) {
 				counter++;
 			}
-		}	
-		
+		}
+
 		return counter;
 	}
 
@@ -266,35 +266,80 @@ public class LecturerServiceImpl implements LecturerService {
 
 	@Override
 	public Map<String, Object> createClassAttendanceMap(Schedule s) {
-		
-		Map<String,Object> classAttendanceMap=new HashMap<>();
+
+		Map<String, Object> classAttendanceMap = new HashMap<>();
 		classAttendanceMap.put("id", s.getId());
 		classAttendanceMap.put("date", s.getDate());
 		classAttendanceMap.put("predictedAttendanceRate", s.getPredictedAttendance());
 		classAttendanceMap.put("actualAttendanceRate", calculateScheduleAttendanceRate(s));
-		
+
 		return classAttendanceMap;
 	}
-	
+
 	public int calculateScheduleAttendanceRate(Schedule schedule) {
-			
-			int classSize= calculateClassSize(schedule.get_class().getId());
-			
-			List<Attendance> attendedStudent=new ArrayList<>();
-			double classAttendanceRate=0;
-					
-			for(Attendance a:arepo.findAll()) {
-				if(a.getSchedule().getId() == schedule.getId()) {
-					if(a.getSignIn()==true && a.getSignOut()==true)
-						attendedStudent.add(a);
+
+		int classSize = calculateClassSize(schedule.get_class().getId());
+
+		List<Attendance> attendedStudent = new ArrayList<>();
+		double classAttendanceRate = 0;
+
+		for (Attendance a : arepo.findAll()) {
+			if (a.getSchedule().getId() == schedule.getId()) {
+				if (a.getSignIn() == true && a.getSignOut() == true)
+					attendedStudent.add(a);
+			}
+		}
+
+		if (classSize != 0)
+			classAttendanceRate = (double) (attendedStudent.size() / classSize) * 100;
+
+		return (int) classAttendanceRate;
+	}
+
+	@Override
+	public List<Integer> getStudentIdByPredictedPerformance(int classId, String i) {
+
+		return enrolmentRepo.findStudentIdByClassId(classId, i);
+
+	}
+
+	@Override
+	public Map<String, Object> createStudentMap(int id, List<Schedule> schedules) {
+
+		Student studentDetails = sturepo.findById(id).get();
+
+		Map<String, Object> studentAttendanceMap = new HashMap<>();
+		studentAttendanceMap.put("id", studentDetails.getId());
+		studentAttendanceMap.put("firstname", studentDetails.getFirstName());
+		studentAttendanceMap.put("lastname", studentDetails.getLastName());
+		studentAttendanceMap.put("studentId", studentDetails.getStudentId());
+		studentAttendanceMap.put("username", studentDetails.getUserName());
+		studentAttendanceMap.put("attendancerate", calculateStudentAttendanceRate(id, schedules));
+
+		return studentAttendanceMap;
+	}
+
+	public int calculateStudentAttendanceRate(int id, List<Schedule> schedules) {
+
+		int totalClasses = 0;
+		int studentPresentRate = 0;
+		double studentAttendanceRate = 0;
+
+		for (Schedule s : schedules) {
+			for (Attendance a : arepo.findAll()) {
+				if (a.getSchedule().getId() == s.getId() && a.getStudent().getId() == id) {
+					if (a.getSignIn() == true && a.getSignOut() == true) {
+						studentPresentRate++;
+					}
+					totalClasses++;
 				}
 			}
-			
-			if(classSize != 0)
-				classAttendanceRate=(double)(attendedStudent.size()/classSize)*100;
-			
-			return (int)classAttendanceRate;
-	}
-	
+		}
 
+		if (totalClasses != 0)
+			studentAttendanceRate = (double) (studentPresentRate / totalClasses) * 100;
+
+		return (int) studentAttendanceRate;
+
+	}
 }
