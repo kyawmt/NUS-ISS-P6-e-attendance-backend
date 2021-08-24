@@ -193,7 +193,7 @@ public class LecturerController {
 	@GetMapping (value = {"class/predict/{classid}"})
 	public void savePrediction (@PathVariable Integer classid) throws Exception {
 		
-		URL url = new URL(" http://127.0.0.1:5000/predict");
+		URL url = new URL("https://sa52team3gradeprediction.de.r.appspot.com/");
 		HttpURLConnection con = (HttpURLConnection) url.openConnection();
 		con.setRequestMethod("POST");
 		con.setRequestProperty("Content-Type", "application/json; utf-8");
