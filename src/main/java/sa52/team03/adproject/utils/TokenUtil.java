@@ -46,11 +46,9 @@ public class TokenUtil {
 	}
 
 	public Boolean isTokenExpired(String token) {
-		
 		Claims claims = getClaimsFromToken(token);
 		Date expiration = claims.getExpiration();
 		return expiration.before(new Date());
-
 	}
 
 	public String refreshToken(String token) {

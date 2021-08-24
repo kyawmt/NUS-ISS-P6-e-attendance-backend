@@ -34,6 +34,7 @@ import sa52.team03.adproject.domain.Module;
 import sa52.team03.adproject.domain.Schedule;
 import sa52.team03.adproject.domain.Student;
 import sa52.team03.adproject.service.AdminService;
+import sa52.team03.adproject.utils.FaceUtil;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -122,42 +123,60 @@ public class AdminController {
 		return "success";
 	}
 
-    @GetMapping("/students")
-    public List<Student> getStudents() {
-        return adminService.getStudents();
-    }
-    
-    @GetMapping("/students/{id}")
-    public Student getStudentById(@PathVariable int id) {
-        return adminService.getStudentById(id);
-    }
+	@GetMapping("/students")
+	public List<Student> getStudents() {
+		return adminService.getStudents();
+	}
 
-    @PostMapping("/students")
-    public Student addStudent(@RequestBody Student student) {
-        return adminService.saveStudent(student);
-    }
-    
-    @PutMapping("/students/{id}")
-    public Student updateStudent(@PathVariable int id, @RequestBody Student student) {
-        Student updatedStudent = adminService.getStudentById(id);
-        
-        updatedStudent.setFirstName(student.getFirstName());
-        updatedStudent.setLastName(student.getLastName());
-        updatedStudent.setUserName(student.getUserName());
-        
-        return adminService.saveStudent(updatedStudent);
-    }
-    
-    @DeleteMapping("/students/{id}")
-    public void deleteStudent(@PathVariable int id) {
-        adminService.deleteStudent(id);
-    }
-    
-    @GetMapping("/students/check-exist/{id}")
-    public Boolean isStudentExist(@PathVariable int id, @RequestParam String userName) {
-        return adminService.isStudentExist(id, userName);
-    }
-    
+	@GetMapping("/students/{id}")
+	public Student getStudentById(@PathVariable int id) {
+		return adminService.getStudentById(id);
+	}
+
+	@PostMapping("/students")
+	public Student addStudent(@RequestBody Student student) {
+		return adminService.saveStudent(student);
+	}
+
+	@PostMapping("/studentphoto")
+	public String addStudentPic(@RequestParam("photo") String str, @RequestParam("id") int userId) {
+
+		String img_data = str.substring(23, str.length());
+		String successMsg = FaceUtil.addFace(img_data, userId);
+		if (successMsg.equals("SUCCESS")) {
+			Student student = adminService.getStudentById(userId);
+			student.setPhotoRegistered(true);
+			adminService.saveStudent(student);
+		}
+		System.out.println("photo register " + successMsg);
+		return successMsg;
+	}
+
+	@PutMapping("/students/{id}")
+	public Student updateStudent(@PathVariable int id, @RequestBody Student student) {
+		Student updatedStudent = adminService.getStudentById(id);
+
+		updatedStudent.setFirstName(student.getFirstName());
+		updatedStudent.setLastName(student.getLastName());
+		updatedStudent.setUserName(student.getUserName());
+
+		return adminService.saveStudent(updatedStudent);
+	}
+
+	@DeleteMapping("/students/{id}")
+	public String deleteStudent(@PathVariable int id) {
+		adminService.deleteStudent(id);
+		String successMsg = FaceUtil.deleteUser(id);
+		System.out.println("photo delete " + successMsg);
+		return successMsg;
+
+	}
+
+	@GetMapping("/students/check-exist/{id}")
+	public Boolean isStudentExist(@PathVariable int id, @RequestParam String userName) {
+		return adminService.isStudentExist(id, userName);
+	}
+
 	@GetMapping("/lecturers")
 	public List<Lecturer> getLecturers() {
 		return adminService.getLecturers();
@@ -190,17 +209,17 @@ public class AdminController {
 		adminService.deleteLecturer(id);
 	}
 
-    @GetMapping("/lecturers/check-exist/{id}")
-    public Boolean isLecturerExist(@PathVariable int id, @RequestParam String userName) {
-        return adminService.isLecturerExist(id, userName);
-    }
-    
-    @GetMapping("/modules/validation/{toCheck}/{moduleValidation}")
-    public Map<String, Object> getValidationForModule(@PathVariable String toCheck, @PathVariable String moduleValidation) {
-        return adminService.createValidationMap(toCheck, moduleValidation);
-    }
+	@GetMapping("/lecturers/check-exist/{id}")
+	public Boolean isLecturerExist(@PathVariable int id, @RequestParam String userName) {
+		return adminService.isLecturerExist(id, userName);
+	}
 
-	
+	@GetMapping("/modules/validation/{toCheck}/{moduleValidation}")
+	public Map<String, Object> getValidationForModule(@PathVariable String toCheck,
+			@PathVariable String moduleValidation) {
+		return adminService.createValidationMap(toCheck, moduleValidation);
+	}
+
 	@GetMapping("/modules")
 	public List<Module> getModule() {
 		return adminService.getModules();

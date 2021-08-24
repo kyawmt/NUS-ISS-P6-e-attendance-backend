@@ -39,15 +39,18 @@ public class AcademicPeriodRepoUnitTest {
 	@Test
 	@Order(1)
 	public void create() {
+		
+		AcademicPeriod ap1 = new AcademicPeriod(2019, Semester.SEMESTER1);
+		AcademicPeriod ap2 = new AcademicPeriod(2019, Semester.SEMESTER2);		
+		AcademicPeriod ap3 = new AcademicPeriod(2020, Semester.SEMESTER1);
+		AcademicPeriod ap4 = new AcademicPeriod(2020, Semester.SEMESTER2);
+		AcademicPeriod ap5 = new AcademicPeriod(2021, Semester.SEMESTER1);
+		AcademicPeriod ap6 = new AcademicPeriod(2021, Semester.SEMESTER2);
+		AcademicPeriod ap7 = new AcademicPeriod(2022, Semester.SEMESTER1);
+		AcademicPeriod ap8 = new AcademicPeriod(2022, Semester.SEMESTER2);
+		AcademicPeriod ap9 = new AcademicPeriod(2023, Semester.SEMESTER1);
+		AcademicPeriod ap10 = new AcademicPeriod(2023, Semester.SEMESTER2);
 
-		AcademicPeriod ap1 = new AcademicPeriod(2021, Semester.SEMESTER1);
-		AcademicPeriod ap2 = new AcademicPeriod(2021, Semester.SEMESTER2);
-		AcademicPeriod ap3 = new AcademicPeriod(2022, Semester.SEMESTER1);
-		AcademicPeriod ap4 = new AcademicPeriod(2022, Semester.SEMESTER2);
-		AcademicPeriod ap5 = new AcademicPeriod(2023, Semester.SEMESTER1);
-		AcademicPeriod ap6 = new AcademicPeriod(2023, Semester.SEMESTER2);
-		AcademicPeriod ap7 = new AcademicPeriod(2019, Semester.SEMESTER1);
-		AcademicPeriod ap8 = new AcademicPeriod(2019, Semester.SEMESTER2);
 		AcademicPeriod savedap1 = aprepo.save(ap1);
 		AcademicPeriod savedap2 = aprepo.save(ap2);
 		AcademicPeriod savedap3 = aprepo.save(ap3);
@@ -56,6 +59,8 @@ public class AcademicPeriodRepoUnitTest {
 		AcademicPeriod savedap6 = aprepo.save(ap6);
 		AcademicPeriod savedap7 = aprepo.save(ap7);
 		AcademicPeriod savedap8 = aprepo.save(ap8);
+		AcademicPeriod savedap9 = aprepo.save(ap9);
+		AcademicPeriod savedap10 = aprepo.save(ap10);
 
 		assertNotNull(savedap1);
 		assertNotNull(savedap2);
@@ -65,6 +70,8 @@ public class AcademicPeriodRepoUnitTest {
 		assertNotNull(savedap6);
 		assertNotNull(savedap7);
 		assertNotNull(savedap8);
+		assertNotNull(savedap9);
+		assertNotNull(savedap10);
 	}
 
 	@Test

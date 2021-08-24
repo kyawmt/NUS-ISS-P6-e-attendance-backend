@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import org.apache.commons.lang3.RandomStringUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -18,7 +20,7 @@ public class Lecturer {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
-	private String staffId;	
+	private String staffId= "STAFF" + RandomStringUtils.randomNumeric(5);
 	
 	private String firstName;
 	
