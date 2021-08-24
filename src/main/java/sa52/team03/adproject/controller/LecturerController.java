@@ -347,26 +347,35 @@ public class LecturerController {
 		return lecturerService.getLecturerSchedulesByRange(lecturer, startDate, endDate);
 	}
 
-	@GetMapping("/classes/{lecturerId}")
-	public List<Map<String, Object>> getClassInfoByLecturerId(@PathVariable int lecturerId) {
+	@GetMapping("/classes")
+	public List<Map<String, Object>> getClassInfoByLecturerId(HttpServletRequest request) {
+		String token = request.getHeader("JwtToken");
+		String userName = tokenUtil.getUsernameFromToken(token);
+
+		Lecturer lecturer = lecturerService.getLecturerbyUsername(userName);
+		
 		List<Map<String, Object>> classMapList = new ArrayList<>();
-		List<Class> classes = lecturerService.getClassesByLecturerId(lecturerId);
+		List<Class> classes = lecturerService.getClassesByLecturerId(lecturer.getId());
 
 		for (Class c : classes) {
 			Map<String, Object> classMap = lecturerService.createClassMap(c);
 			classMapList.add(classMap);
 		}
 		return classMapList;
-	}
+	}	
 
 	@GetMapping("/class/{classId}")
 	public Map<String, Object> getClassInfoByClassId(@PathVariable int classId) {
+//		adminService.updateClassStudentPredictedGrade(classId); To call for ML prediction in class grade
+		
 		Class c = lecturerService.getClassById(classId);
 		return lecturerService.createClassMap(c);
 	}
 
 	@GetMapping("/classDates/{classId}")
-	public List<Map<String, Object>> getClassAttendenceByClassId(@PathVariable int classId) {
+	public List<Map<String, Object>> getClassAttendenceByClassId(@PathVariable int classId) throws Exception {
+//		adminService.updateClassPredictedAttendanceRate(classId); To call for ML prediction in class attendance
+		
 		List<Map<String, Object>> classAttendanceMapList = new ArrayList<>();
 		List<Schedule> schedules = lecturerService.getSchedulesByClassId(classId);
 
