@@ -1,6 +1,8 @@
 package sa52.team03.adproject.controller;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -11,12 +13,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import sa52.team03.adproject.domain.Attendance;
+import sa52.team03.adproject.domain.AttendanceSuccessData;
 import sa52.team03.adproject.domain.QRCodeData;
 import sa52.team03.adproject.domain.Schedule;
 import sa52.team03.adproject.domain.Student;
@@ -36,7 +40,7 @@ public class StudentController {
 	
 	@PostMapping("/scanQRCode")
 	public ResponseEntity<HttpStatus> scanQRCodeData(@RequestBody QRCodeData qrCodeData) {		
-				
+		
         Schedule schedule = studentService.getScheduleById(qrCodeData.getScheduleId());        
         String signInOutId = qrCodeData.getSignInSignOutId();
         String option = qrCodeData.getOption();   
@@ -61,7 +65,7 @@ public class StudentController {
 	
 	@PostMapping("/takeAttendance")
 	public ResponseEntity<HttpStatus> takeAttendance(@RequestBody QRCodeData qrCodeData) {		
-				
+		
         Schedule schedule = studentService.getScheduleById(qrCodeData.getScheduleId());        
         String signInOutId = qrCodeData.getSignInSignOutId();
 		String option = qrCodeData.getOption();
@@ -70,7 +74,7 @@ public class StudentController {
         
 		if(option.equals("signIn")) {
 			if(schedule.getSignInId()!=null) {
-				if( signInOutId.equals(schedule.getSignInId().split("_")[1]) && Long.parseLong(schedule.getSignInId().split("_")[0]) > Instant.now().toEpochMilli()){					
+				if( signInOutId.equals(schedule.getSignInId().split("_")[1]) && Long.parseLong(schedule.getSignInId().split("_")[0]) > Instant.now().toEpochMilli()){	
 					attendance.setSignIn(true);
                     studentService.saveAttendance(attendance);                    
                     return new ResponseEntity<>(HttpStatus.OK);					
@@ -95,5 +99,26 @@ public class StudentController {
         Student student = studentService.getStudentByUserName(userName);
         return studentService.getStudentClassModuleScheduleAttendance(student);
     }
+    
+    @GetMapping("/getAttendanceSuccess/{qrCodeData}")
+	public AttendanceSuccessData getAttendanceSuccessData(HttpServletRequest request, @PathVariable String qrCodeData) {
+    	  	 
+    	String token = request.getHeader("JwtToken");
+        String userName = tokenUtil.getUsernameFromToken(token);
+        String[] qrCode = qrCodeData.split("_");
+    	
+    	Schedule schedule = studentService.getScheduleById(Integer.parseInt(qrCode[1]));
+    	Student student = studentService.findStudentByUserName(userName);   	
+    	
+    	String studentId = "Student ID: " + student.getStudentId();
+    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm:ss a");
+    	String submissionTime = "Submission Time: " + LocalDateTime.now().format(formatter);   
+    	String moduleCode = "Module Code: " + schedule.get_class().getModule().getCode();
+    	String classDateTime = "Class Date & Time: " + schedule.getDate() + ", 09:00AM to 05:00PM";      	   	
+    			
+    	return new AttendanceSuccessData(studentId, submissionTime, moduleCode, classDateTime);
+    	
+    }
+    
     
 }
