@@ -290,6 +290,7 @@ public class AdminServiceImpl implements AdminService {
 
 		Map<String, Object> classMap = new HashMap<>();
 		classMap.put("id", c.getId());
+		classMap.put("code", c.getCode());
 		classMap.put("modulecode", c.getModule().getCode());
 		classMap.put("moduleid", c.getModule().getId());
 		classMap.put("year", c.getAcademicPeriod().getYear());

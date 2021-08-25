@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,12 +35,16 @@ import sa52.team03.adproject.domain.Module;
 import sa52.team03.adproject.domain.Schedule;
 import sa52.team03.adproject.domain.Student;
 import sa52.team03.adproject.service.AdminService;
+import sa52.team03.adproject.service.MailService;
 import sa52.team03.adproject.utils.FaceUtil;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping(path = "/api/admin/")
 public class AdminController {
+	
+	@Autowired
+	MailService mailService;
 
 	@Autowired
 	AdminService adminService;
@@ -62,6 +67,7 @@ public class AdminController {
 			JSONObject _classJson = new JSONObject();
 
 			_classJson.put("id", _class.getId());
+			_classJson.put("code", _class.getCode());
 			_classJson.put("moduleCode", _class.getModule().getCode());
 			_classJson.put("moduleName", _class.getModule().getName());
 			_classJson.put("year", _class.getAcademicPeriod().getYear());
@@ -286,20 +292,39 @@ public class AdminController {
 
 		return studentMapList;
 	}
-	
+
 	@PostMapping("/class-enroll-students/{id}")
-	public void enrollStudents(@PathVariable int id,@RequestBody Integer[] selectedStudentsId) {
-		for(int i=0;i<selectedStudentsId.length;i++)
+	public void enrollStudents(@PathVariable int id, @RequestBody Integer[] selectedStudentsId) {
+		for (int i = 0; i < selectedStudentsId.length; i++)
 			adminService.enrollStudent(id, selectedStudentsId[i]);
-		
+
 	}
-	
+
+	@GetMapping("/class-enroll-students/{id}")
+	public List<Student> getStudentsNotInClass(@PathVariable int id) {
+		List<Student> allStudents = adminService.getStudents();
+		List<Student> inclassStudents=adminService.getStudentsByClassId(id);
+		allStudents.removeAll(inclassStudents);
+		List<Student> notInclassStudents=allStudents;
+		return notInclassStudents;
+	}
+
 	@PostMapping("/module-classes-students/{id}")
-	public void removeStudentsFromClass(@PathVariable int id,@RequestBody Integer[] selectedStudentsId){
-		for(int i=0;i<selectedStudentsId.length;i++)
+	public void removeStudentsFromClass(@PathVariable int id, @RequestBody Integer[] selectedStudentsId) {
+		for (int i = 0; i < selectedStudentsId.length; i++)
 			adminService.removeStudentInClass(id, selectedStudentsId[i]);
 	}
 
+	@PostMapping("/email/{classCode}/{id}")
+	public String sendRemindMail(@PathVariable String classCode,@PathVariable int id) {
+		
+	String toEmail=adminService.getStudentById(id).getUserName();
+	String subject="Class attendace rate reminder!";
+	String text="your attendance rate for class "+classCode+"is under minimum attendace requirement.";
+	mailService.sendMail(toEmail,subject,text);
+	return "email send";
+	}
+	
 	// testing for ML predicted attendance
 	@GetMapping(value = "predict/{classId")
 	public void testoifpredictedschedulecan(@PathVariable int classID) throws Exception {
