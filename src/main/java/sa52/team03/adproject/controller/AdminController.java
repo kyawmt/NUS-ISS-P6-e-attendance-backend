@@ -286,6 +286,19 @@ public class AdminController {
 
 		return studentMapList;
 	}
+	
+	@PostMapping("/class-enroll-students/{id}")
+	public void enrollStudents(@PathVariable int id,@RequestBody Integer[] selectedStudentsId) {
+		for(int i=0;i<selectedStudentsId.length;i++)
+			adminService.enrollStudent(id, selectedStudentsId[i]);
+		
+	}
+	
+	@PostMapping("/module-classes-students/{id}")
+	public void removeStudentsFromClass(@PathVariable int id,@RequestBody Integer[] selectedStudentsId){
+		for(int i=0;i<selectedStudentsId.length;i++)
+			adminService.removeStudentInClass(id, selectedStudentsId[i]);
+	}
 
 	// testing for ML predicted attendance
 	@GetMapping(value = "predict/{classId")

@@ -238,8 +238,6 @@ public class AdminServiceImpl implements AdminService {
 	public String calculateClassAttendanceRate(int classId) {
 
 		List<Student> classSize = new ArrayList<>();
-		// Use class size, or calculate list in Enrolment Entity?
-		// actually, no need attribute--size in Class Entity?
 		List<Attendance> attendedStudent = new ArrayList<>();
 		List<Schedule> classScheduleUntilNow = this.getClassScheduleUntilNow(classId);
 		double classAttendanceRate = 0;
@@ -318,6 +316,25 @@ public class AdminServiceImpl implements AdminService {
 		studentMap.put("reachMinAttendanceOrNot", reachMinAttendanceOrNot);
 
 		return studentMap;
+	}
+	
+	@Override
+	public void enrollStudent(int classId,int studentId) {
+		Class c=classRepo.getById(classId);
+		Student s=studentRepo.getById(studentId);
+		
+		Enrolment e=new Enrolment(c,s);
+		if(getStudentsByClassId(c.getId()).size()<=c.getSize()){
+			enrolmentRepo.save(e);
+		}
+	}
+	
+	@Override
+	public void  removeStudentInClass(int classId,int studentId) {
+		for(Enrolment e:enrolmentRepo.findAll()) {
+			if(e.get_class().getId()==classId && e.getStudent().getId()==studentId)
+				enrolmentRepo.delete(e);
+		}
 	}
 
 	// For MAchine Learning Model 1--predict class student pass or not

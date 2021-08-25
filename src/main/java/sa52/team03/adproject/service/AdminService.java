@@ -83,5 +83,9 @@ public interface AdminService {
 	public Boolean isStudentExist(int id, String userName);
 
 	public Boolean isLecturerExist(int id, String userName);
+	
+	public void enrollStudent(int classId,int studentId);
+	
+	public void  removeStudentInClass(int classId,int studentId) ;
 
 }
