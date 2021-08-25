@@ -27,7 +27,7 @@ import sa52.team03.adproject.domain.Student;
 import sa52.team03.adproject.service.StudentService;
 import sa52.team03.adproject.utils.TokenUtil;
 
-@CrossOrigin(origins= "http://localhost:3000")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(path = "/api/student/")
 public class StudentController {
