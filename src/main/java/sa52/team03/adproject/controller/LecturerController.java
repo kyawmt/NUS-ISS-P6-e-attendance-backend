@@ -35,7 +35,7 @@ import sa52.team03.adproject.service.AdminService;
 import sa52.team03.adproject.service.LecturerService;
 import sa52.team03.adproject.utils.TokenUtil;
 
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping(path = "/api/lecturer/")
 public class LecturerController {

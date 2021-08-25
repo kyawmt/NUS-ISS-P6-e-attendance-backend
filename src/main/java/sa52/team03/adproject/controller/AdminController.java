@@ -36,7 +36,7 @@ import sa52.team03.adproject.domain.Student;
 import sa52.team03.adproject.service.AdminService;
 import sa52.team03.adproject.utils.FaceUtil;
 
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping(path = "/api/admin/")
 public class AdminController {

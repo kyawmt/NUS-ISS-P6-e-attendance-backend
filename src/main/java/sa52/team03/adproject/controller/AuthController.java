@@ -22,7 +22,7 @@ import sa52.team03.adproject.repo.LecturerRepository;
 import sa52.team03.adproject.repo.StudentRepository;
 import sa52.team03.adproject.utils.TokenUtil;
 
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 public class AuthController {
 
