@@ -1,5 +1,10 @@
 package sa52.team03.adproject.service;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -64,6 +70,9 @@ public class LecturerServiceImpl implements LecturerService {
 
 	@Autowired
 	AdminService adminService;
+	
+	@Autowired 
+	LecturerService lecturerService;
 
 	@Override
 	public List<Attendance> getListOfClass() {
@@ -83,8 +92,8 @@ public class LecturerServiceImpl implements LecturerService {
 	}
 
 	@Override
-	public List<Integer> findScheduleByClassID(int id) {
-		return srepo.findScheduleIDByClassID(id);
+	public List<Schedule> findScheduleByClassID(int id) {
+		return srepo.findScheduleByClassID(id);
 	}
 
 	@Override
@@ -342,4 +351,60 @@ public class LecturerServiceImpl implements LecturerService {
 		return (int) studentAttendanceRate;
 
 	}
+	
+	
+	@Override
+	public void savePrediction (Integer classid) throws Exception {
+				
+		URL url = new URL("https://sa52team3gradeprediction.de.r.appspot.com/");
+		HttpURLConnection con = (HttpURLConnection) url.openConnection();
+		con.setRequestMethod("POST");
+		con.setRequestProperty("Content-Type", "application/json; utf-8");
+		con.setDoOutput(true);
+
+		List<Student> selectedStudents = adminService.getStudentsByClassId(classid);
+		List<Integer> studentids = new ArrayList<>();
+		for (Student s : selectedStudents) {
+			studentids.add(s.getId());
+		}
+		Integer[] studentid = (Integer[]) studentids.toArray(new Integer[studentids.size()]);
+		List<Integer> studentAttendanceRate = new ArrayList<>();
+		for (Integer a : studentids) {
+			int b = adminService.calculateStudentAttendanceRate(classid, a);
+			int c = 100 - b;
+			studentAttendanceRate.add(c);
+		}
+
+		JSONArray a1 = new JSONArray();
+		for (Integer i : studentAttendanceRate) {
+			a1.put(i);
+		}
+
+		try (OutputStream os = con.getOutputStream()) {
+			os.write(a1.toString().getBytes("UTF-8"));
+		}
+
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"))) {
+			StringBuilder response = new StringBuilder();
+			String responseLine = null;
+			while ((responseLine = br.readLine()) != null) {
+				response.append(responseLine.trim());
+			}
+			String[] predict = response.toString().split(",");
+			List<Enrolment> e = lecturerService.findEnrolmentByClassid(classid);
+			Enrolment[] es = (Enrolment[]) e.toArray(new Enrolment[e.size()]);
+
+				for (int j = 0; j < predict.length; j++) {
+					if (es[j].getStudent().getId() == studentid[j]) {
+						String predict1 = predict[j].replaceAll("\\D+", "");
+						es[j].setPredictedPerformance(predict1);
+						lecturerService.saveEnrolment(es[j]);
+
+					}
+				}
+				}
+		}
+	
 }
+	
+		

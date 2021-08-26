@@ -19,7 +19,7 @@ public interface LecturerService {
 
 	public List<Integer> findClassIDbyLecID(int id);
 
-	public List<Integer> findScheduleByClassID(int id);
+	public List<Schedule> findScheduleByClassID(int id);
 
 	public Attendance getAttendanceByClassSchedule(int id);
 
@@ -62,5 +62,8 @@ public interface LecturerService {
 	public List<Integer> getStudentIdByPredictedPerformance(int classId, String i);
 
 	public Map<String, Object> createStudentMap(int id, List<Schedule> s);
+
+	public void savePrediction(Integer classid) throws Exception;
+	
 
 }

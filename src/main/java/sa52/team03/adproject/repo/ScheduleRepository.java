@@ -11,8 +11,8 @@ import sa52.team03.adproject.domain.Schedule;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
 	
-	@Query("Select s.id from Schedule s where s._class.id = :id")
-	public List<Integer> findScheduleIDByClassID(int id);
+	@Query("Select s from Schedule s where s._class.id = :id")
+	public List<Schedule> findScheduleByClassID(int id);
 	
 	@Query("Select s from Schedule s where s.id = :id")
 	public Schedule getSchedule(int id);

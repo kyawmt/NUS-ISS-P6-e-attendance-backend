@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,45 +50,85 @@ public class LecturerController {
 	@Autowired
 	private TokenUtil tokenUtil;
 
-	public List<Integer> getClassesID() {
-		String username = "tan";
-		Lecturer lec = lecturerService.getLecturerbyUsername(username);
-		return lecturerService.findClassIDbyLecID(lec.getId());
-	}
 
-	public Integer[] convertfromListToArray(List<Integer> o) {
-		Integer[] id = (Integer[]) o.toArray(new Integer[o.size()]);
-		return id;
-	}
-
-	public List<Integer> getScheudleID() {
-		List<Integer> classIDs = getClassesID();
-		Integer[] classesID = convertfromListToArray(classIDs);
-		List<Integer> allSchedules = new ArrayList<>();
-		for (int j = 0; j < classesID.length; j++) {
-			List<Integer> s2 = lecturerService.findScheduleByClassID(classesID[j]);
-			allSchedules.addAll(s2);
-		}
-		return allSchedules;
-	}
 
 	@GetMapping("class/schedules")
-	public List<Schedule> getSchedules() {
-		List<Integer> allSchedules = getScheudleID();
-		List<Schedule> allScheduleObject = new ArrayList<>();
+	public List<Schedule> getSchedules(HttpServletRequest request) {
+		String token = request.getHeader("JwtToken");
+		String userName = tokenUtil.getUsernameFromToken(token);
+		Lecturer lecturer = lecturerService.getLecturerbyUsername(userName);		
+		List<Class> classesID = lecturerService.getClassesByLecturerId(lecturer.getId());		
+		List<Schedule> allSchedules = new ArrayList<>();
 
-		for (Integer i : allSchedules) {
-			Schedule s = lecturerService.getSchedule(i);
-			allScheduleObject.add(s);
+		for (Class c : classesID) {
+			List<Schedule> a = lecturerService.findScheduleByClassID(c.getId());
+			allSchedules.addAll(a);
 		}
 
-		return allScheduleObject;
+		return allSchedules;
 
 	}
+	
+	@GetMapping("maxschedule")
+	public Map<String,Integer> getMaxSchedule(HttpServletRequest request) {
+		String token = request.getHeader("JwtToken");
+		String userName = tokenUtil.getUsernameFromToken(token);
+		Lecturer lecturer = lecturerService.getLecturerbyUsername(userName);
+		List<Class> classesID = lecturerService.getClassesByLecturerId(lecturer.getId());		
+		List<Schedule> allSchedules = new ArrayList<>();
+		for (Class c : classesID) {
+			List<Schedule> a = lecturerService.findScheduleByClassID(c.getId());
+			allSchedules.addAll(a);
+		}
+		List<Integer> sIDs = new ArrayList<>();
+		for (Schedule s : allSchedules)
+			sIDs.add(s.getId());
+		
+		Integer a = Collections.max(sIDs);
+		Map<String, Integer> maxSchedule = new HashMap<>();
+		maxSchedule.put("maxID", a);
+		
+		return maxSchedule;
+	}
+	
+	@GetMapping (value = {"schedule/name/{ids}"})
+	public Map<String, String> getNameandDate(@PathVariable int ids, HttpServletRequest request){
+		String token = request.getHeader("JwtToken");
+		String userName = tokenUtil.getUsernameFromToken(token);
+		Lecturer lecturer = lecturerService.getLecturerbyUsername(userName);		
+		List<Class> classesID = lecturerService.getClassesByLecturerId(lecturer.getId());		
+		List<Schedule> allSchedules = new ArrayList<>();
+		for (Class c : classesID) {
+			List<Schedule> a = lecturerService.findScheduleByClassID(c.getId());
+			allSchedules.addAll(a);
+		}
+		
+		Schedule selectedSchedule = lecturerService.getSchedule(ids);
+		String moduleName = selectedSchedule.get_class().getModule().getName();
+		String date = selectedSchedule.getDate().toString();
+		Map<String, String> datesandname = new HashMap<>();
+		datesandname.put("scheduleDate", date);
+		datesandname.put("moduleName", moduleName);
+		
+		return datesandname;
+		
+	}
+
+
 
 	@GetMapping(value = { "class/schedules/attendance/present/{ids}" })
-	public List<Student> getAttendancePresent(@PathVariable int ids) {
-		List<Schedule> allSchedules = getSchedules();
+	public List<Student> getAttendancePresent(@PathVariable int ids, HttpServletRequest request) {
+		String token = request.getHeader("JwtToken");
+		String userName = tokenUtil.getUsernameFromToken(token);
+		Lecturer lecturer = lecturerService.getLecturerbyUsername(userName);		
+		List<Class> classesID = lecturerService.getClassesByLecturerId(lecturer.getId());		
+		List<Schedule> allSchedules = new ArrayList<>();
+
+		for (Class c : classesID) {
+			List<Schedule> a = lecturerService.findScheduleByClassID(c.getId());
+			allSchedules.addAll(a);
+		}
+		
 		Schedule selectedSchedule = lecturerService.getSchedule(ids);
 
 		List<Student> present = new ArrayList<>();
@@ -106,8 +147,18 @@ public class LecturerController {
 	}
 
 	@GetMapping(value = { "class/schedules/attendance/absent/{ids}" })
-	public List<Student> getAttendanceAbsent(@PathVariable int ids) {
-		List<Schedule> allSchedules = getSchedules();
+	public List<Student> getAttendanceAbsent(@PathVariable int ids, HttpServletRequest request) {
+		String token = request.getHeader("JwtToken");
+		String userName = tokenUtil.getUsernameFromToken(token);
+		Lecturer lecturer = lecturerService.getLecturerbyUsername(userName);		
+		List<Class> classesID = lecturerService.getClassesByLecturerId(lecturer.getId());		
+		List<Schedule> allSchedules = new ArrayList<>();
+
+		for (Class c : classesID) {
+			List<Schedule> a = lecturerService.findScheduleByClassID(c.getId());
+			allSchedules.addAll(a);
+		}
+		
 		Schedule currentSchedule = lecturerService.getSchedule(ids);
 
 		List<Student> absent = new ArrayList<>();
@@ -121,8 +172,18 @@ public class LecturerController {
 	}
 
 	@GetMapping(value = { "class/schedules/attendance/overview/{ids}" })
-	public Map<String, Integer> showAttendanceRate(@PathVariable Integer ids) {
-		List<Schedule> allSchedules = getSchedules();
+	public Map<String, Integer> showAttendanceRate(@PathVariable Integer ids, HttpServletRequest request) {
+		String token = request.getHeader("JwtToken");
+		String userName = tokenUtil.getUsernameFromToken(token);
+		Lecturer lecturer = lecturerService.getLecturerbyUsername(userName);		
+		List<Class> classesID = lecturerService.getClassesByLecturerId(lecturer.getId());		
+		List<Schedule> allSchedules = new ArrayList<>();
+
+		for (Class c : classesID) {
+			List<Schedule> a = lecturerService.findScheduleByClassID(c.getId());
+			allSchedules.addAll(a);
+		}
+		
 
 		List<Student> present = new ArrayList<>();
 		List<Student> absent = new ArrayList<>();
@@ -177,7 +238,10 @@ public class LecturerController {
 
 	}
 	@GetMapping(value = {"schedule/{ids}"})
-	public Map<String, String> getnameanddate(@PathVariable Integer ids){
+	public Map<String, String> getnameanddate(@PathVariable Integer ids, HttpServletRequest request){
+		String token = request.getHeader("JwtToken");
+		String userName = tokenUtil.getUsernameFromToken(token);
+		Lecturer lecturer = lecturerService.getLecturerbyUsername(userName);
 		Schedule schedule = lecturerService.getSchedule(ids);
 		String moduleName = schedule.get_class().getModule().getName();
 		String scheduleDate = schedule.getDate().toString();
@@ -328,8 +392,7 @@ public class LecturerController {
 
 	@GetMapping("/class/{classId}")
 	public Map<String, Object> getClassInfoByClassId(@PathVariable int classId) throws Exception {
-		savePrediction(classId);
-		
+		lecturerService.savePrediction(classId);		
 		Class c = lecturerService.getClassById(classId);
 		return lecturerService.createClassMap(c);
 	}
@@ -362,62 +425,6 @@ public class LecturerController {
 		return studentMapList;
 	}
 	
-	// can only call in controller method
-		public void savePrediction (Integer classid) throws Exception {
-			
-			URL url = new URL("https://sa52team3gradeprediction.de.r.appspot.com/");
-			HttpURLConnection con = (HttpURLConnection) url.openConnection();
-			con.setRequestMethod("POST");
-			con.setRequestProperty("Content-Type", "application/json; utf-8");
-			con.setDoOutput(true);
-
-			List<Student> selectedStudents = adminService.getStudentsByClassId(classid);
-			List<Integer> studentids = new ArrayList<>();
-			for (Student s : selectedStudents) {
-				studentids.add(s.getId());
-			}
-
-			Integer[] studentid = convertfromListToArray(studentids);
-
-			List<Integer> studentAttendanceRate = new ArrayList<>();
-
-			for (Integer a : studentids) {
-				int b = adminService.calculateStudentAttendanceRate(classid, a);
-				int c = 100 - b;
-				studentAttendanceRate.add(c);
-			}
-
-			JSONArray a1 = new JSONArray();
-			for (Integer i : studentAttendanceRate) {
-				a1.put(i);
-			}
-
-			try (OutputStream os = con.getOutputStream()) {
-				os.write(a1.toString().getBytes("UTF-8"));
-			}
-
-			try (BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"))) {
-				StringBuilder response = new StringBuilder();
-				String responseLine = null;
-				while ((responseLine = br.readLine()) != null) {
-					response.append(responseLine.trim());
-				}
-				String[] predict = response.toString().split(",");
-
-				List<Enrolment> e = lecturerService.findEnrolmentByClassid(classid);
-				Enrolment[] es = (Enrolment[]) e.toArray(new Enrolment[e.size()]);
-
-				for (int j = 0; j < predict.length; j++) {
-					if (es[j].getStudent().getId() == studentid[j]) {
-						String predict1 = predict[j].replaceAll("\\D+", "");
-						es[j].setPredictedPerformance(predict1);
-						lecturerService.saveEnrolment(es[j]);
-
-					}
-				}
-
-			}
-
-		}
+	
 
 }
