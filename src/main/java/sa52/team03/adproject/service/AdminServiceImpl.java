@@ -13,6 +13,7 @@ import java.util.Map;
 import sa52.team03.adproject.domain.Admin;
 import sa52.team03.adproject.repo.AdminRepository;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -386,13 +387,12 @@ public class AdminServiceImpl implements AdminService {
 
 	@Override
 	public void updateClassPredictedAttendanceRate(int classId) throws Exception {
-
-		URL url = new URL(" http://127.0.0.1:5000/predictattendance");
-		HttpURLConnection con = (HttpURLConnection) url.openConnection();
-		con.setRequestMethod("POST");
-		con.setRequestProperty("Content-Type", "application/json; utf-8");
-		con.setDoOutput(true);
-
+		
+		int max = 100;
+        int min = 1;
+        int range = max - min + 1;       
+        
+		
 		List<LocalDate> futureScheduleDate = new ArrayList<>();
 		List<Schedule> ss = new ArrayList<>();
 
@@ -400,17 +400,46 @@ public class AdminServiceImpl implements AdminService {
 			futureScheduleDate.add(s.getDate());
 			ss.add(s);
 		}
+		
+		LocalDate [] dates = (LocalDate[]) futureScheduleDate.toArray(new LocalDate[futureScheduleDate.size()]);
+		
+		List<Integer> randomnumbers = new ArrayList<>();
+		
+		for (int i = 0; i < dates.length; i++) {
+			int rand = (int)(Math.random() * range) + min;
+			randomnumbers.add(rand);
+		}
+		Integer[] rand = (Integer[]) randomnumbers.toArray(new Integer[randomnumbers.size()]);
+		
+		
+		List<Map> list = new ArrayList<>();
+		
+		for (int i =0; i<rand.length; i++) {
+			Map<String, Object> ob = new HashMap<>();
+			ob.put("ds", dates[i]);
+			ob.put("y", rand[i]);
+			list.add(ob);
+		}
+		
 
 		Schedule[] sss = (Schedule[]) ss.toArray(new Schedule[ss.size()]);
 
-		JSONArray a1 = new JSONArray();
-		for (LocalDate ld : futureScheduleDate) {
-			a1.put(ld);
-		}
+		URL url = new URL("https://sa52team3gradeprediction.de.r.appspot.com/attend");
+		HttpURLConnection con = (HttpURLConnection) url.openConnection();
+		con.setRequestMethod("POST");
+		con.setRequestProperty("Content-Type", "application/json; utf-8");
+		con.setDoOutput(true);
 
-		try (OutputStream os = con.getOutputStream()) {
-			os.write(a1.toString().getBytes("UTF-8"));
+		List<JSONObject> jsonObj = new ArrayList<JSONObject>();
+		for(Map data : list) {
+		    JSONObject obj = new JSONObject(data);
+		    jsonObj.add(obj);
 		}
+		
+		try(OutputStream os = con.getOutputStream()) {
+		    os.write(jsonObj.toString().getBytes("UTF-8"));		
+		}
+		
 
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"))) {
 			StringBuilder response = new StringBuilder();
@@ -422,9 +451,10 @@ public class AdminServiceImpl implements AdminService {
 
 			for (int j = 0; j < predict.length; j++) {
 				Schedule s = sss[j];
-				String predict1 = predict[j].replaceAll("\\D+", "");
-				int a = Integer.parseInt(predict1);
-				s.setPredictedAttendance(a);
+				String str = predict[j].replaceAll("[^\\d.]", "");
+				double a = Double.parseDouble(str);
+				int b = (int) Math.round(a);;
+				s.setPredictedAttendance(b);
 				scheduleRepo.save(s);
 			}
 		}

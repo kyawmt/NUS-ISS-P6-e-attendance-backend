@@ -335,8 +335,7 @@ public class LecturerController {
 
 	@GetMapping("/classDates/{classId}")
 	public List<Map<String, Object>> getClassAttendenceByClassId(@PathVariable int classId) throws Exception {
-//		adminService.updateClassPredictedAttendanceRate(classId); To call for ML prediction in class attendance
-		
+		adminService.updateClassPredictedAttendanceRate(classId);		
 		List<Map<String, Object>> classAttendanceMapList = new ArrayList<>();
 		List<Schedule> schedules = lecturerService.getSchedulesByClassId(classId);
 
