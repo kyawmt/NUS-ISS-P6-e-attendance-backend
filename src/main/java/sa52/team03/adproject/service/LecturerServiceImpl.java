@@ -221,6 +221,7 @@ public class LecturerServiceImpl implements LecturerService {
 		return crepo.findClassByLecturerId(id);
 	}
 
+	
 	@Override
 	public Map<String, Object> createClassMap(Class c) {
 		String classAttendanceRate = adminService.calculateClassAttendanceRate(c.getId());
@@ -279,7 +280,7 @@ public class LecturerServiceImpl implements LecturerService {
 		Map<String, Object> classAttendanceMap = new HashMap<>();
 		classAttendanceMap.put("id", s.getId());
 		classAttendanceMap.put("date", s.getDate());
-//		classAttendanceMap.put("predictedAttendanceRate", s.getPredictedAttendance());
+		classAttendanceMap.put("predictedAttendanceRate", s.getPredictedAttendance());
 		classAttendanceMap.put("actualAttendanceRate", calculateScheduleAttendanceRate(s));
 
 		return classAttendanceMap;
@@ -351,60 +352,25 @@ public class LecturerServiceImpl implements LecturerService {
 		return (int) studentAttendanceRate;
 
 	}
-	
-	
+
 	@Override
-	public void savePrediction (Integer classid) throws Exception {
-				
-		URL url = new URL("https://sa52team3gradeprediction.de.r.appspot.com/");
-		HttpURLConnection con = (HttpURLConnection) url.openConnection();
-		con.setRequestMethod("POST");
-		con.setRequestProperty("Content-Type", "application/json; utf-8");
-		con.setDoOutput(true);
+	public Map<String, Object> createSideBarClassMap(Class c) {
+		String classAttendanceRate = adminService.calculateClassAttendanceRate(c.getId());
+		int classSize = calculateClassSize(c.getId());
 
-		List<Student> selectedStudents = adminService.getStudentsByClassId(classid);
-		List<Integer> studentids = new ArrayList<>();
-		for (Student s : selectedStudents) {
-			studentids.add(s.getId());
-		}
-		Integer[] studentid = (Integer[]) studentids.toArray(new Integer[studentids.size()]);
-		List<Integer> studentAttendanceRate = new ArrayList<>();
-		for (Integer a : studentids) {
-			int b = adminService.calculateStudentAttendanceRate(classid, a);
-			int c = 100 - b;
-			studentAttendanceRate.add(c);
-		}
+		Map<String, Object> classMap = new HashMap<>();
+		classMap.put("id", c.getId());
+		classMap.put("modulename", c.getModule().getName());
+		classMap.put("modulecode", c.getModule().getCode());
+		classMap.put("moduleid", c.getModule().getId());
+		classMap.put("code", c.getCode());
+		classMap.put("year", c.getAcademicPeriod().getYear());
+		classMap.put("semester", c.getAcademicPeriod().getSemester());
+		classMap.put("rate", classAttendanceRate);
+		classMap.put("size", classSize);
 
-		JSONArray a1 = new JSONArray();
-		for (Integer i : studentAttendanceRate) {
-			a1.put(i);
-		}
-
-		try (OutputStream os = con.getOutputStream()) {
-			os.write(a1.toString().getBytes("UTF-8"));
-		}
-
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"))) {
-			StringBuilder response = new StringBuilder();
-			String responseLine = null;
-			while ((responseLine = br.readLine()) != null) {
-				response.append(responseLine.trim());
-			}
-			String[] predict = response.toString().split(",");
-			List<Enrolment> e = lecturerService.findEnrolmentByClassid(classid);
-			Enrolment[] es = (Enrolment[]) e.toArray(new Enrolment[e.size()]);
-
-				for (int j = 0; j < predict.length; j++) {
-					if (es[j].getStudent().getId() == studentid[j]) {
-						String predict1 = predict[j].replaceAll("\\D+", "");
-						es[j].setPredictedPerformance(predict1);
-						lecturerService.saveEnrolment(es[j]);
-
-					}
-				}
-				}
-		}
-	
+		return classMap;
+	}
 }
 	
 		
