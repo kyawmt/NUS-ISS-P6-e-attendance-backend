@@ -59,18 +59,21 @@ public class AuthController {
 			
 			headers.add("role", "admin");
 			headers.add("fullname", admin.getFirstName()+" "+admin.getLastName());
+			headers.add("userId", String.valueOf(admin.getId()));
 			headers.add("JwtToken", token);
 
 		} else if (lecturer != null && lecturer.getPassword().equals(password)) {
 			
 			headers.add("role", "lecturer");
 			headers.add("fullname", lecturer.getFirstName()+" "+lecturer.getLastName());
+			headers.add("userId", String.valueOf(lecturer.getId()));
 			headers.add("JwtToken", token);
 
 		} else if (student != null && student.getPassword().equals(password)) {
 			
 			headers.add("role", "student");
 			headers.add("fullname", student.getFirstName()+" "+student.getLastName());
+			headers.add("userId", String.valueOf(student.getId()));
 			headers.add("JwtToken", token);
 
 		} else {
