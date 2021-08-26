@@ -270,7 +270,7 @@ public class LecturerServiceImpl implements LecturerService {
 		Map<String, Object> classAttendanceMap = new HashMap<>();
 		classAttendanceMap.put("id", s.getId());
 		classAttendanceMap.put("date", s.getDate());
-		classAttendanceMap.put("predictedAttendanceRate", s.getPredictedAttendance());
+//		classAttendanceMap.put("predictedAttendanceRate", s.getPredictedAttendance());
 		classAttendanceMap.put("actualAttendanceRate", calculateScheduleAttendanceRate(s));
 
 		return classAttendanceMap;

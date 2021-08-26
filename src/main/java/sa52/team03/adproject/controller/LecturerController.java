@@ -335,8 +335,8 @@ public class LecturerController {
 	}
 
 	@GetMapping("/classDates/{classId}")
-	public List<Map<String, Object>> getClassAttendenceByClassId(@PathVariable int classId) throws Exception {
-		adminService.updateClassPredictedAttendanceRate(classId);		
+	public List<Map<String, Object>> getClassAttendenceByClassId(@PathVariable int classId) {	
+		
 		List<Map<String, Object>> classAttendanceMapList = new ArrayList<>();
 		List<Schedule> schedules = lecturerService.getSchedulesByClassId(classId);
 
