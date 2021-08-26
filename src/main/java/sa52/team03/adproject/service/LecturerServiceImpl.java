@@ -276,7 +276,7 @@ public class LecturerServiceImpl implements LecturerService {
 		return classAttendanceMap;
 	}
 
-	public int calculateScheduleAttendanceRate(Schedule schedule) {
+	public double calculateScheduleAttendanceRate(Schedule schedule) {
 
 		int classSize = calculateClassSize(schedule.get_class().getId());
 
@@ -291,9 +291,9 @@ public class LecturerServiceImpl implements LecturerService {
 		}
 
 		if (classSize != 0)
-			classAttendanceRate = (double) (attendedStudent.size() / classSize) * 100;
-
-		return (int) classAttendanceRate;
+			classAttendanceRate = ((double)attendedStudent.size() / (double)classSize) * 100;
+		
+		return Math.round(classAttendanceRate);
 	}
 
 	@Override

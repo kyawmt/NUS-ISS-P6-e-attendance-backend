@@ -329,6 +329,7 @@ public class LecturerController {
 	@GetMapping("/class/{classId}")
 	public Map<String, Object> getClassInfoByClassId(@PathVariable int classId) throws Exception {
 		savePrediction(classId);
+		
 		Class c = lecturerService.getClassById(classId);
 		return lecturerService.createClassMap(c);
 	}
