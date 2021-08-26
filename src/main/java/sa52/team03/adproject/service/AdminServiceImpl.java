@@ -228,7 +228,7 @@ public class AdminServiceImpl implements AdminService {
 		List<Schedule> classScheduleUntilNow = new ArrayList<>();
 
 		for (Schedule s : scheduleRepo.findAll()) {
-			if (s.get_class().getId() == classId && s.getDate().isBefore(LocalDate.now()))
+			if (s.get_class().getId() == classId && s.getDate().isBefore(LocalDate.now().plusDays(1)))
 				classScheduleUntilNow.add(s);
 		}
 
