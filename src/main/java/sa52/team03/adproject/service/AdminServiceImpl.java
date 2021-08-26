@@ -313,7 +313,8 @@ public class AdminServiceImpl implements AdminService {
 		studentMap.put("id", s.getId());
 		studentMap.put("studentId", s.getStudentId());
 		studentMap.put("firstName", s.getFirstName());
-		studentMap.put("lastName", s.getFirstName());
+		studentMap.put("lastName", s.getLastName());
+		studentMap.put("userName", s.getUserName());
 		studentMap.put("rate", String.valueOf(attendanceRate) + "%");
 		studentMap.put("reachMinAttendanceOrNot", reachMinAttendanceOrNot);
 
