@@ -212,6 +212,7 @@ public class LecturerServiceImpl implements LecturerService {
 		return crepo.findClassByLecturerId(id);
 	}
 
+	
 	@Override
 	public Map<String, Object> createClassMap(Class c) {
 		String classAttendanceRate = adminService.calculateClassAttendanceRate(c.getId());
@@ -270,7 +271,7 @@ public class LecturerServiceImpl implements LecturerService {
 		Map<String, Object> classAttendanceMap = new HashMap<>();
 		classAttendanceMap.put("id", s.getId());
 		classAttendanceMap.put("date", s.getDate());
-//		classAttendanceMap.put("predictedAttendanceRate", s.getPredictedAttendance());
+		classAttendanceMap.put("predictedAttendanceRate", s.getPredictedAttendance());
 		classAttendanceMap.put("actualAttendanceRate", calculateScheduleAttendanceRate(s));
 
 		return classAttendanceMap;
@@ -341,5 +342,24 @@ public class LecturerServiceImpl implements LecturerService {
 
 		return (int) studentAttendanceRate;
 
+	}
+
+	@Override
+	public Map<String, Object> createSideBarClassMap(Class c) {
+		String classAttendanceRate = adminService.calculateClassAttendanceRate(c.getId());
+		int classSize = calculateClassSize(c.getId());
+
+		Map<String, Object> classMap = new HashMap<>();
+		classMap.put("id", c.getId());
+		classMap.put("modulename", c.getModule().getName());
+		classMap.put("modulecode", c.getModule().getCode());
+		classMap.put("moduleid", c.getModule().getId());
+		classMap.put("code", c.getCode());
+		classMap.put("year", c.getAcademicPeriod().getYear());
+		classMap.put("semester", c.getAcademicPeriod().getSemester());
+		classMap.put("rate", classAttendanceRate);
+		classMap.put("size", classSize);
+
+		return classMap;
 	}
 }

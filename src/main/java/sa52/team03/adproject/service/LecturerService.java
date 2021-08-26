@@ -63,4 +63,6 @@ public interface LecturerService {
 
 	public Map<String, Object> createStudentMap(int id, List<Schedule> s);
 
+	public Map<String, Object> createSideBarClassMap(Class c);
+
 }
