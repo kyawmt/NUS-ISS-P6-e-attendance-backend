@@ -111,7 +111,7 @@ public class StudentController {
     	Student student = studentService.findStudentByUserName(userName);   	
     	
     	String studentId = "Student ID: " + student.getStudentId();
-    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm:ss a");
+    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, hh:mm:ss a");
     	String submissionTime = "Submission Time: " + LocalDateTime.now().format(formatter);   
     	String moduleCode = "Module Code: " + schedule.get_class().getModule().getCode();
     	String classDateTime = "Class Date & Time: " + schedule.getDate() + ", 09:00AM to 05:00PM";      	   	
