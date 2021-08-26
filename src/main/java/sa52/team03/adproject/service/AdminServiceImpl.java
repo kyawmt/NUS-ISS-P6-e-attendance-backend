@@ -425,7 +425,7 @@ public class AdminServiceImpl implements AdminService {
 
 		Schedule[] sss = (Schedule[]) ss.toArray(new Schedule[ss.size()]);
 
-		URL url = new URL("https://sa52team3gradeprediction.de.r.appspot.com/attend");
+		URL url = new URL("https://sa52team3gradeprediction.de.r.appspot.com/predict");
 		HttpURLConnection con = (HttpURLConnection) url.openConnection();
 		con.setRequestMethod("POST");
 		con.setRequestProperty("Content-Type", "application/json; utf-8");
