@@ -28,9 +28,9 @@ public class Student {
 
 	private String userName;
 
-	private String password;
-	
-	private boolean photoRegistered=false;
+	private String password = "123456";
+
+	private boolean photoRegistered = false;
 
 	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
@@ -46,7 +46,14 @@ public class Student {
 
 	public Student() {
 		super();
-		
+
+	}
+
+	public Student(String firstName, String lastName, String userName) {
+		super();
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.userName = userName;
 	}
 
 	public Student(String studentId, String firstName, String lastName, String userName, String password) {
