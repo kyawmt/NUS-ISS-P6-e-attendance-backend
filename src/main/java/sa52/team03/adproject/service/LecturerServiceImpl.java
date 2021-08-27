@@ -347,7 +347,7 @@ public class LecturerServiceImpl implements LecturerService {
 		}
 
 		if (totalClasses != 0)
-			studentAttendanceRate = (double) (studentPresentRate / totalClasses) * 100;
+			studentAttendanceRate = ((double)studentPresentRate / (double)totalClasses) * 100;
 
 		return (int) studentAttendanceRate;
 
