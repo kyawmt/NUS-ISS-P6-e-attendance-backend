@@ -392,16 +392,14 @@ public class LecturerController {
 	}	
 
 	@GetMapping("/class/{classId}")
-	public Map<String, Object> getClassInfoByClassId(@PathVariable int classId) throws Exception {
-		lecturerService.savePrediction(classId);		
+	public Map<String, Object> getClassInfoByClassId(@PathVariable int classId){		
 		Class c = lecturerService.getClassById(classId);
 		return lecturerService.createClassMap(c);
 	}
 
 	@GetMapping("/classDates/{classId}")
-	public List<Map<String, Object>> getClassAttendenceByClassId(@PathVariable int classId) throws Exception {
-		
-        adminService.updateClassPredictedAttendanceRate(classId);        
+	public List<Map<String, Object>> getClassAttendenceByClassId(@PathVariable int classId) {
+		      
 		
 		List<Map<String, Object>> classAttendanceMapList = new ArrayList<>();
 		List<Schedule> schedules = lecturerService.getSchedulesByClassId(classId);

@@ -126,6 +126,18 @@ public class LecturerServiceImpl implements LecturerService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public List<Integer> getallClassID(){
+		List<Class> c = crepo.findAll();
+		List<Integer> ic = new ArrayList<>();
+		for (Class cc : c) {
+			ic.add(cc.getId());
+		}
+		
+		return ic;
+			
+	}
 
 	@Override
 	public List<Schedule> getSchedules() {

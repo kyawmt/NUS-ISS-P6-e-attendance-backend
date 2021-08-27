@@ -66,6 +66,7 @@ public interface LecturerService {
 	public void savePrediction(Integer classid) throws Exception;
 	
 	public Map<String, Object> createSideBarClassMap(Class c);
+	public List<Integer> getallClassID();
 	
 
 }
