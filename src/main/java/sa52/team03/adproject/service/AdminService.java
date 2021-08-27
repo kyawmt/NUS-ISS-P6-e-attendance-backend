@@ -89,5 +89,7 @@ public interface AdminService {
 	public void enrollStudent(int classId,int studentId);
 	
 	public void  removeStudentInClass(int classId,int studentId) ;
+	
+	public List<Integer> classID();
 
 }

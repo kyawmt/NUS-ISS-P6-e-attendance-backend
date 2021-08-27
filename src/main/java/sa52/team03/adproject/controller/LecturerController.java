@@ -86,18 +86,29 @@ public class LecturerController {
 			List<Schedule> a = lecturerService.findScheduleByClassID(c.getId());
 			allSchedules.addAll(a);
 		}
-		List<Integer> sIDs = new ArrayList<>();
 		
-		for (Schedule s : allSchedules) {
-			if (s.getSignInId() != null || s.getSignOutId() != null)
-				sIDs.add(s.getId());
+		Schedule[] allschedule = (Schedule[]) allSchedules.toArray(new Schedule[allSchedules.size()]);
+		int b = 0;
+		Schedule maxs;
+		LocalDate nowDate = LocalDate.now();
+		
+		if (allSchedules == null) {
+			b = 0;
+		}
+		else {
+			for (int i =0; i<allschedule.length; i++) {
+				for (int j = 0; j<allschedule.length; j++) {
+					if (allschedule[i].getDate().isAfter(allschedule[j].getDate()) && allschedule[i].getDate().isBefore(nowDate)) {
+						maxs = allschedule[i];
+						b = allschedule[i].getId();
+					}
+				}
+			}
 		}
 		
-		int a = Collections.max(sIDs);
-		
-		
 		Map<String, Integer> maxSchedule = new HashMap<>();
-		maxSchedule.put("maxID", a);
+		maxSchedule.put("maxID",b);	
+		
 		
 		return maxSchedule;
 	}
@@ -232,11 +243,16 @@ public class LecturerController {
 		String moduleName = schedule.get_class().getModule().getName();
 		LocalDate scheduleDate = schedule.getDate();
 		
+		int absentwreason = 0;
+		int absentworeason = 0;
+		int presentpercent = 0;
 		
-		int absentwreason = absentwithValidReason.size()*100 / totalSize;
-		int absentworeason = absent.size()*100/totalSize;
-		int presentpercent = present.size()*100/totalSize;
-		
+		if (totalSize!=0) {
+			absentwreason = absentwithValidReason.size()*100 / totalSize;
+			absentworeason = absent.size()*100/totalSize;
+			presentpercent = present.size()*100/totalSize;
+			
+		}
 		
 		
 		Map<String, Integer> overview = new HashMap();
@@ -404,8 +420,7 @@ public class LecturerController {
 
 	@GetMapping("/class/{classId}")
 	public Map<String, Object> getClassInfoByClassId(@PathVariable int classId) throws Exception{	
-		
-		lecturerService.savePrediction(classId);
+	
 		Class c = lecturerService.getClassById(classId);
 		return lecturerService.createClassMap(c);
 	}
@@ -427,8 +442,6 @@ public class LecturerController {
 	@GetMapping("/prediction/{classId}/{index}")
 	public List<Map<String, Object>> getStudentPredictedAttendance (@PathVariable int classId, @PathVariable int index) throws Exception {
 		
-		adminService.updateClassPredictedAttendanceRate(classId);
-
 		List<Map<String, Object>> studentMapList = new ArrayList<>();
 		List<Integer> studentIds = lecturerService.getStudentIdByPredictedPerformance(classId, String.valueOf(index));
 		List<Schedule> schedules = lecturerService.getSchedulesByClassId(classId);
@@ -441,22 +454,6 @@ public class LecturerController {
 		return studentMapList;
 	}
 	
-	
-	//save grade prediction
-	@GetMapping("/prediction/savegrade")
-	public void savePredictionforgrades() throws Exception{
-		List<Integer> classid = lecturerService.getallClassID();
-		for (Integer i: classid)
-			lecturerService.savePrediction(i);
-	}
-	
-	//save attendance prediction
-	@GetMapping("/prediction/saveattendance")
-	public void saveAttendance() throws Exception{
-		List<Integer> classid = lecturerService.getallClassID();
-		for (Integer i: classid)
-			adminService.updateClassPredictedAttendanceRate(i);
-	}
 	
 	
 
