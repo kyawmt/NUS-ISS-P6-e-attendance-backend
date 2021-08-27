@@ -48,7 +48,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
 					|| (uri.startsWith("/api/student") && student != null)) {
 				return true;
 			}
-		} else if (uri.startsWith("/token")) {
+		} else if (uri.startsWith("/token")||uri.startsWith("/prediction/savegrade")||uri.startsWith("/prediction/saveattendance")) {
 			return true;
 		}
 		return false;

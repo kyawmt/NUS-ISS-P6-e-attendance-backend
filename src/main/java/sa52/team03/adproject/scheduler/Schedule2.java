@@ -13,7 +13,7 @@ public class Schedule2 extends TimerTask{
 	
 	public void run() {
 		try {
-			lcontrol.saveAttendance();
+			lcontrol.savePredictionforgrades();
 		}
 		catch (Exception e) {
 			System.out.println(e);
