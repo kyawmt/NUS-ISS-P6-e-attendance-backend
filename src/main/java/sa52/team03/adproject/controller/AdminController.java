@@ -318,9 +318,23 @@ public class AdminController {
 	@PostMapping("/email/{classCode}/{id}")
 	public String sendRemindMail(@PathVariable String classCode,@PathVariable int id) {
 		
-	String toEmail=adminService.getStudentById(id).getUserName();
-	String subject="Class attendace rate reminder!";
-	String text="your attendance rate for class "+classCode+"is under minimum attendace requirement.";
+	Student student=adminService.getStudentById(id);
+	String toEmail=student.getUserName();
+	String fullname=student.getFirstName()+" "+student.getLastName();
+	Class _class=adminService.getClassByCode(classCode);
+	Module module=_class.getModule();
+	
+	String subject="Class attendance rate Email Notification";
+	
+	String text="Dear"+fullname+",\r\n"
+			+ "\r\n"
+			+ "You are not meeting the minimum attendance requirement for "+module.getName()+". Please be reminded that you will need to meet "+module.getMinAttendance()+" in order to sit for the end-of-semester examinations.\r\n"
+			+ "\r\n"
+			+ "This is an automated email. Please do not reply to this email.\r\n"
+			+ "\r\n"
+			+ "Regards,\r\n"
+			+ "School Administrator";
+	
 	mailService.sendMail(toEmail,subject,text);
 	return "email send";
 	}

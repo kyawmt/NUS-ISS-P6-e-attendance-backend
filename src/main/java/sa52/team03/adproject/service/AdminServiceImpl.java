@@ -296,9 +296,9 @@ public class AdminServiceImpl implements AdminService {
 		classMap.put("moduleid", c.getModule().getId());
 		classMap.put("year", c.getAcademicPeriod().getYear());
 		classMap.put("semester", c.getAcademicPeriod().getSemester());
-		classMap.put("maxSize",c.getSize());
-		classMap.put("currentSize",getStudentsByClassId(c.getId()).size());
-		classMap.put("remainingSize",c.getSize()-getStudentsByClassId(c.getId()).size());
+		classMap.put("maxSize", c.getSize());
+		classMap.put("currentSize", getStudentsByClassId(c.getId()).size());
+		classMap.put("remainingSize", c.getSize() - getStudentsByClassId(c.getId()).size());
 		classMap.put("rate", classAttendanceRate);
 
 		return classMap;
@@ -323,22 +323,22 @@ public class AdminServiceImpl implements AdminService {
 
 		return studentMap;
 	}
-	
+
 	@Override
-	public void enrollStudent(int classId,int studentId) {
-		Class c=classRepo.getById(classId);
-		Student s=studentRepo.getById(studentId);
-		
-		Enrolment e=new Enrolment(c,s);
-		if(getStudentsByClassId(c.getId()).size()<=c.getSize()){
+	public void enrollStudent(int classId, int studentId) {
+		Class c = classRepo.getById(classId);
+		Student s = studentRepo.getById(studentId);
+
+		Enrolment e = new Enrolment(c, s);
+		if (getStudentsByClassId(c.getId()).size() <= c.getSize()) {
 			enrolmentRepo.save(e);
 		}
 	}
-	
+
 	@Override
-	public void  removeStudentInClass(int classId,int studentId) {
-		for(Enrolment e:enrolmentRepo.findAll()) {
-			if(e.get_class().getId()==classId && e.getStudent().getId()==studentId)
+	public void removeStudentInClass(int classId, int studentId) {
+		for (Enrolment e : enrolmentRepo.findAll()) {
+			if (e.get_class().getId() == classId && e.getStudent().getId() == studentId)
 				enrolmentRepo.delete(e);
 		}
 	}
@@ -391,12 +391,11 @@ public class AdminServiceImpl implements AdminService {
 
 	@Override
 	public void updateClassPredictedAttendanceRate(int classId) throws Exception {
-		
+
 		int max = 100;
-        int min = 1;
-        int range = max - min + 1;       
-        
-		
+		int min = 1;
+		int range = max - min + 1;
+
 		List<LocalDate> futureScheduleDate = new ArrayList<>();
 		List<Schedule> ss = new ArrayList<>();
 
@@ -404,27 +403,25 @@ public class AdminServiceImpl implements AdminService {
 			futureScheduleDate.add(s.getDate());
 			ss.add(s);
 		}
-		
-		LocalDate [] dates = (LocalDate[]) futureScheduleDate.toArray(new LocalDate[futureScheduleDate.size()]);
-		
+
+		LocalDate[] dates = (LocalDate[]) futureScheduleDate.toArray(new LocalDate[futureScheduleDate.size()]);
+
 		List<Integer> randomnumbers = new ArrayList<>();
-		
+
 		for (int i = 0; i < dates.length; i++) {
-			int rand = (int)(Math.random() * range) + min;
+			int rand = (int) (Math.random() * range) + min;
 			randomnumbers.add(rand);
 		}
 		Integer[] rand = (Integer[]) randomnumbers.toArray(new Integer[randomnumbers.size()]);
-		
-		
+
 		List<Map> list = new ArrayList<>();
-		
-		for (int i =0; i<rand.length; i++) {
+
+		for (int i = 0; i < rand.length; i++) {
 			Map<String, Object> ob = new HashMap<>();
 			ob.put("ds", dates[i]);
 			ob.put("y", rand[i]);
 			list.add(ob);
 		}
-		
 
 		Schedule[] sss = (Schedule[]) ss.toArray(new Schedule[ss.size()]);
 
@@ -435,15 +432,14 @@ public class AdminServiceImpl implements AdminService {
 		con.setDoOutput(true);
 
 		List<JSONObject> jsonObj = new ArrayList<JSONObject>();
-		for(Map data : list) {
-		    JSONObject obj = new JSONObject(data);
-		    jsonObj.add(obj);
+		for (Map data : list) {
+			JSONObject obj = new JSONObject(data);
+			jsonObj.add(obj);
 		}
-		
-		try(OutputStream os = con.getOutputStream()) {
-		    os.write(jsonObj.toString().getBytes("UTF-8"));		
+
+		try (OutputStream os = con.getOutputStream()) {
+			os.write(jsonObj.toString().getBytes("UTF-8"));
 		}
-		
 
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"))) {
 			StringBuilder response = new StringBuilder();
@@ -457,7 +453,8 @@ public class AdminServiceImpl implements AdminService {
 				Schedule s = sss[j];
 				String str = predict[j].replaceAll("[^\\d.]", "");
 				double a = Double.parseDouble(str);
-				int b = (int) Math.round(a);;
+				int b = (int) Math.round(a);
+				;
 				s.setPredictedAttendance(b);
 				scheduleRepo.save(s);
 			}
@@ -507,5 +504,11 @@ public class AdminServiceImpl implements AdminService {
 		}
 
 		return moduleValidationMap;
+	}
+
+	@Override
+	public Class getClassByCode(String code) {
+		Class _class = classRepo.getByCode(code);
+		return _class;
 	}
 }

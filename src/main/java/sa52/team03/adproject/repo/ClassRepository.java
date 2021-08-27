@@ -19,4 +19,7 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
 	@Query("SELECT c FROM Class c WHERE c.lecturer.id = :id")
 	public List<Class> findClassByLecturerId(@Param("id") int id);
 
+	@Query("SELECT c FROM Class c WHERE c.Code = :code")
+	public Class getByCode(@Param("code") String code);
+
 }

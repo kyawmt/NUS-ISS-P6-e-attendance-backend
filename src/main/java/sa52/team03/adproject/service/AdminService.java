@@ -15,6 +15,8 @@ public interface AdminService {
 	public List<Class> getClasses();
 
 	public Class saveClass(Class c);
+	
+	public Class getClassByCode(String code);
 
 	public List<Lecturer> getLecturers();
 
