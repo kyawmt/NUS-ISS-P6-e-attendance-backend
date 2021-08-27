@@ -59,13 +59,19 @@ public class LecturerController {
 		Lecturer lecturer = lecturerService.getLecturerbyUsername(userName);		
 		List<Class> classesID = lecturerService.getClassesByLecturerId(lecturer.getId());		
 		List<Schedule> allSchedules = new ArrayList<>();
+		List<Schedule> selectedSchedules = new ArrayList<>();
 
 		for (Class c : classesID) {
 			List<Schedule> a = lecturerService.findScheduleByClassID(c.getId());
 			allSchedules.addAll(a);
 		}
+		
+		for (Schedule s : allSchedules) {
+			if (s.getSignInId() != null || s.getSignOutId() != null)
+				selectedSchedules.add(s);
+		}
 
-		return allSchedules;
+		return selectedSchedules;
 
 	}
 	
@@ -81,10 +87,15 @@ public class LecturerController {
 			allSchedules.addAll(a);
 		}
 		List<Integer> sIDs = new ArrayList<>();
-		for (Schedule s : allSchedules)
-			sIDs.add(s.getId());
 		
-		Integer a = Collections.max(sIDs);
+		for (Schedule s : allSchedules) {
+			if (s.getSignInId() != null || s.getSignOutId() != null)
+				sIDs.add(s.getId());
+		}
+		
+		int a = Collections.max(sIDs);
+		
+		
 		Map<String, Integer> maxSchedule = new HashMap<>();
 		maxSchedule.put("maxID", a);
 		
