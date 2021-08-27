@@ -442,5 +442,22 @@ public class LecturerController {
 	}
 	
 	
+	//save grade prediction
+	@GetMapping("/prediction/savegrade")
+	public void savePredictionforgrades() throws Exception{
+		List<Integer> classid = lecturerService.getallClassID();
+		for (Integer i: classid)
+			lecturerService.savePrediction(i);
+	}
+	
+	//save attendance prediction
+	@GetMapping("prediction/saveattendance")
+	public void saveAttendance() throws Exception{
+		List<Integer> classid = lecturerService.getallClassID();
+		for (Integer i: classid)
+			adminService.updateClassPredictedAttendanceRate(i);
+	}
+	
+	
 
 }
