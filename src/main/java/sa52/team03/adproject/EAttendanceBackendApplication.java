@@ -17,8 +17,8 @@ public class EAttendanceBackendApplication {
 		Timer timer = new Timer();
 		Scheduler1 s1 = new Scheduler1();
 		Scheduler2 s2 = new Scheduler2();
-		timer.scheduleAtFixedRate(s1,0, 600000);
-		timer.scheduleAtFixedRate(s2, 0, 600000);
+		timer.scheduleAtFixedRate(s1,2000, 600000);
+		timer.scheduleAtFixedRate(s2, 2000, 600000);
 		
 	}
 
