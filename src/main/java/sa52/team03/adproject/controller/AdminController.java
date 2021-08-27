@@ -326,9 +326,9 @@ public class AdminController {
 	
 	String subject="Class attendance rate Email Notification";
 	
-	String text="Dear"+fullname+",\r\n"
+	String text="Dear "+fullname+",\r\n"
 			+ "\r\n"
-			+ "You are not meeting the minimum attendance requirement for "+module.getName()+". Please be reminded that you will need to meet "+module.getMinAttendance()+" in order to sit for the end-of-semester examinations.\r\n"
+			+ "You are not meeting the minimum attendance requirement for "+module.getName()+". Please be reminded that you will need to meet "+module.getMinAttendance()+"% in order to sit for the end-of-semester examinations.\r\n"
 			+ "\r\n"
 			+ "This is an automated email. Please do not reply to this email.\r\n"
 			+ "\r\n"
