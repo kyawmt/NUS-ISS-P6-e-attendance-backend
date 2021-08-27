@@ -403,7 +403,9 @@ public class LecturerController {
 	}	
 
 	@GetMapping("/class/{classId}")
-	public Map<String, Object> getClassInfoByClassId(@PathVariable int classId){		
+	public Map<String, Object> getClassInfoByClassId(@PathVariable int classId){	
+		
+		lecturerService.savePrediction(classId);
 		Class c = lecturerService.getClassById(classId);
 		return lecturerService.createClassMap(c);
 	}
@@ -423,7 +425,9 @@ public class LecturerController {
 	}
 
 	@GetMapping("/prediction/{classId}/{index}")
-	public List<Map<String, Object>> getStudentPredictedAttendance(@PathVariable int classId, @PathVariable int index) {
+	public List<Map<String, Object>> getStudentPredictedAttendance (@PathVariable int classId, @PathVariable int index) throws Exception {
+		
+		adminService.updateClassPredictedAttendanceRate(classId);
 
 		List<Map<String, Object>> studentMapList = new ArrayList<>();
 		List<Integer> studentIds = lecturerService.getStudentIdByPredictedPerformance(classId, String.valueOf(index));
