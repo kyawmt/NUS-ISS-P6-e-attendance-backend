@@ -134,9 +134,7 @@ public class LecturerServiceImpl implements LecturerService {
 		for (Class cc : c) {
 			ic.add(cc.getId());
 		}
-		
 		return ic;
-			
 	}
 
 	@Override
