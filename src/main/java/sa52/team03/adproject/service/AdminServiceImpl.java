@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import sa52.team03.adproject.domain.Admin;
 import sa52.team03.adproject.repo.AdminRepository;
 import org.json.JSONArray;
@@ -393,7 +395,7 @@ public class AdminServiceImpl implements AdminService {
 	public void updateClassPredictedAttendanceRate(int classId) throws Exception {
 
 		int max = 100;
-		int min = 1;
+		int min = 80;
 		int range = max - min + 1;
 
 		List<LocalDate> futureScheduleDate = new ArrayList<>();
@@ -510,5 +512,19 @@ public class AdminServiceImpl implements AdminService {
 	public Class getClassByCode(String code) {
 		Class _class = classRepo.getByCode(code);
 		return _class;
+	}
+	
+	@Override
+	public List<Integer> classID(){
+		List<Schedule> allSchedules = scheduleRepo.findAll();
+		List<Integer> classIDbeforefilter = new ArrayList<>();
+		for (Schedule s: allSchedules) {
+			if(s.getDate().isAfter(LocalDate.now())) {
+				int a = s.get_class().getId();
+				classIDbeforefilter.add(a);
+			}
+		}
+		List<Integer> distinct = classIDbeforefilter.stream().distinct().collect(Collectors.toList());
+		return distinct;
 	}
 }

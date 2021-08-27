@@ -69,5 +69,6 @@ public interface LecturerService {
 	
 	public List<Integer> getallClassID();
 	
+	public List<Integer> classesID();
 
 }

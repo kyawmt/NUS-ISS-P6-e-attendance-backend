@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -433,7 +434,22 @@ public class LecturerServiceImpl implements LecturerService {
 					}
 				}
 				}
+		con.disconnect();
 		}
+	
+	public List<Integer> classesID(){
+		
+		List<Attendance> allattendance = arepo.findAll();
+		List<Integer> classIDbeforefilter = new ArrayList<>();
+		for (Attendance e : allattendance) {
+			int a = e.getSchedule().get_class().getId();
+			classIDbeforefilter.add(a);
+		}
+		
+		List<Integer> distinct = classIDbeforefilter.stream().distinct().collect(Collectors.toList());
+		return distinct;
+		
+	}
 	
 }
 
