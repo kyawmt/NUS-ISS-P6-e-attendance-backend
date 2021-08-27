@@ -296,6 +296,9 @@ public class AdminServiceImpl implements AdminService {
 		classMap.put("moduleid", c.getModule().getId());
 		classMap.put("year", c.getAcademicPeriod().getYear());
 		classMap.put("semester", c.getAcademicPeriod().getSemester());
+		classMap.put("maxSize",c.getSize());
+		classMap.put("currentSize",getStudentsByClassId(c.getId()).size());
+		classMap.put("remainingSize",c.getSize()-getStudentsByClassId(c.getId()).size());
 		classMap.put("rate", classAttendanceRate);
 
 		return classMap;
