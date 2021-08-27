@@ -403,7 +403,7 @@ public class LecturerController {
 	}	
 
 	@GetMapping("/class/{classId}")
-	public Map<String, Object> getClassInfoByClassId(@PathVariable int classId){	
+	public Map<String, Object> getClassInfoByClassId(@PathVariable int classId) throws Exception{	
 		
 		lecturerService.savePrediction(classId);
 		Class c = lecturerService.getClassById(classId);
