@@ -259,6 +259,7 @@ public class LecturerController {
 		overview.put("AbsentwithvalidReason",absentwreason);
 		overview.put("AbsentwithoutvalidReason",absentworeason);
 		overview.put("Present",presentpercent);
+		overview.put("totalSize", totalSize);
 		
 		
 		return overview;
@@ -421,6 +422,7 @@ public class LecturerController {
 	@GetMapping("/class/{classId}")
 	public Map<String, Object> getClassInfoByClassId(@PathVariable int classId) throws Exception{	
 	
+		lecturerService.savePrediction(classId);
 		Class c = lecturerService.getClassById(classId);
 		return lecturerService.createClassMap(c);
 	}

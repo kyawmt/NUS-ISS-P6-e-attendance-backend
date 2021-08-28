@@ -35,26 +35,7 @@ public class EAttendanceBackendApplication {
 	CommandLineRunner runner() {
 		return args -> {
 
-			Timer timer = new Timer();
-
-			TimerTask s1 = new TimerTask() {
-
-				@Override
-				public void run() {
-					try {
-						List<Integer> classid = lecturerService.classesID();
-						if (classid != null) {
-							for (Integer i : classid) {
-								lecturerService.savePrediction(i);
-							}
-						}						
-					} catch (Exception e) {
-						System.out.println(e);
-					}
-				}
-
-			};
-			
+			Timer timer = new Timer();			
 			TimerTask s2 = new TimerTask() {
 				
 				@Override 
@@ -73,8 +54,6 @@ public class EAttendanceBackendApplication {
 					
 				}
 			};
-
-			timer.scheduleAtFixedRate(s1, 0, 600000);
 			timer.scheduleAtFixedRate(s2, 0, 600000);
 
 		};
