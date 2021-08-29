@@ -78,7 +78,7 @@ public class AuthController {
 
 		} else {
 
-			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		headers.add("Access-Control-Expose-Headers", "role");
 		headers.add("Access-Control-Expose-Headers", "fullname");
