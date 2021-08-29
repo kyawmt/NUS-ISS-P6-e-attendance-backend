@@ -44,11 +44,12 @@ public class LoggingInterceptor implements HandlerInterceptor {
 			Lecturer lecturer = lecturerRepository.findByUserName(username);
 			Student student = studentRepository.findByUserName(username);
 
-			if ((uri.startsWith("/api/lecturer") && lecturer != null) || (uri.startsWith("/api/admin") && admin != null)
+			if ((uri.startsWith("/api/lecturer") && lecturer != null) 
+					|| (uri.startsWith("/api/admin") && admin != null)
 					|| (uri.startsWith("/api/student") && student != null)) {
 				return true;
 			}
-		} else if (uri.startsWith("/token")||uri.startsWith("/prediction/savegrade")||uri.startsWith("/prediction/saveattendance")) {
+		} else if (uri.startsWith("/token")) {
 			return true;
 		}
 		return false;
