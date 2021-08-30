@@ -54,7 +54,7 @@ public class EAttendanceBackendApplication {
 					
 				}
 			};
-			timer.scheduleAtFixedRate(s2, 0, 4320000);
+			timer.scheduleAtFixedRate(s2, 0, 600000);
 
 		};
 	}
