@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import sa52.team03.adproject.domain.AcademicPeriod;
+import sa52.team03.adproject.domain.Admin;
 import sa52.team03.adproject.domain.Class;
 import sa52.team03.adproject.domain.Lecturer;
 import sa52.team03.adproject.domain.Module;
@@ -91,5 +92,9 @@ public interface AdminService {
 	public void  removeStudentInClass(int classId,int studentId) ;
 	
 	public List<Integer> classID();
+	
+	public void saveAcademicPeriod(AcademicPeriod acPeriod);
+	
+	public void saveAdmin(Admin admin);
 
 }

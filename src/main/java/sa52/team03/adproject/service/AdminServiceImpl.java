@@ -527,4 +527,15 @@ public class AdminServiceImpl implements AdminService {
 		List<Integer> distinct = classIDbeforefilter.stream().distinct().collect(Collectors.toList());
 		return distinct;
 	}
+	
+	@Override
+	public void saveAcademicPeriod(AcademicPeriod acPeriod) {
+		
+		academicPeriodRepo.save(acPeriod);
+	}
+	
+	@Override
+	public void saveAdmin(Admin admin) {
+		adminRepo.save(admin);
+	}
 }
