@@ -387,7 +387,7 @@ public class LecturerServiceImpl implements LecturerService {
 	@Override
 	public void savePrediction (Integer classid) throws Exception {
 				
-		URL url = new URL("https://sa52team3gradeprediction.de.r.appspot.com/");
+		URL url = new URL("https://gradprediction.as.r.appspot.com/");
 		HttpURLConnection con = (HttpURLConnection) url.openConnection();
 		con.setRequestMethod("POST");
 		con.setRequestProperty("Content-Type", "application/json; utf-8");
